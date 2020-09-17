@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Игорь](https://up.htmlacademy.ru/javascript/21/user/1196281).
-* Наставник: `Неизвестно`.
+* Наставник: `Александр Пинаев`.
 
 ---
 
