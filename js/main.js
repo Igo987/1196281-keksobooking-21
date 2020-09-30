@@ -3,7 +3,6 @@
 let map = document.querySelector(`.map`);
 map.classList.remove(`map--faded`);
 
-
 /* Функция получения случайного целого числа в диапозоне */
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
@@ -11,33 +10,31 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-/* получение случайного значения из массива возможного количества комнат */
-const rooms = document.querySelector(`#housing-rooms`);
-let roomsArray = [];
-for (let i = 0; i <= getRandomIntInclusive(0, rooms.length); i++) {
-  roomsArray = rooms[i].textContent;
+/* Функция получения случайного индекса массива */
+function getRandomIndexfromArr(arr) {
+  return getRandomIntInclusive(0, arr.length - 1);
 }
+
+/* получение случайного значения из массива возможного количества комнат */
+const roomOptionElements = document.querySelector(`#housing-rooms`);
+let roomOptions = {};
+roomOptions = roomOptionElements[getRandomIndexfromArr(roomOptionElements, getRandomIntInclusive)].textContent;
 
 
 /* получение случайного значения из массива возможного времени заселения */
 const times = document.querySelector(`#timein`);
-let timesArray = [];
-for (let i = 0; i <= getRandomIntInclusive(0, times.length); i++) {
-  timesArray = times[i].textContent;
-}
+let checkInTime = {};
+checkInTime = times[getRandomIndexfromArr(times, getRandomIntInclusive)].textContent;
+
 
 /* получение случайного значения из массива возможного времени выселения */
 const timesOut = document.querySelector(`#timeout`);
-let timesArrayOut = [];
-for (let i = 0; i < getRandomIntInclusive(0, timesOut.length); i++) {
-  timesArrayOut = timesOut[i].textContent;
-}
+let checkOuTime = {};
+checkOuTime = timesOut[getRandomIndexfromArr(times, checkOuTime, getRandomIntInclusive)].textContent;
 
-
-const templateAdd = document.querySelector(`#card`).content;
-const address = templateAdd.querySelector(`.popup__text--address`).textContent;
-const price = templateAdd.querySelector(`.popup__text--price`).textContent;
-
+/* Цена и адрес */
+const price = getRandomIntInclusive(0, 60000);
+const address = (`location.x:` + getRandomIntInclusive(0, 700) + `,` + `location.y:` + getRandomIntInclusive(130, 630));
 
 /* Фичи */
 const featuresArr = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
@@ -71,9 +68,9 @@ for (let i = 0; i < getRandomIntInclusive(1, guests.length); i++) {
 const text = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua`;
 
 /* Добавление объявления с данными из массива*/
-const MapPins = document.querySelector(`.map__pin`);
-/* const Pin = document.querySelector('#pin').content;
- let newPin = Pin.cloneNode(true); */
+const mapPins = document.querySelector(`.map__pin`);
+const PIN_HEIGHT = 84;
+const PIN_HALF_WEIGTH = 32;
 
 /* Генерация данных восьми объектов (объявлений) */
 const newAdd = [];
@@ -89,10 +86,10 @@ for (let i = 1; i <= 8; i++) {
       'address': address,
       'price': price,
       'type': newArrType,
-      'rooms': roomsArray,
+      'rooms': roomOptions,
       'guests': newArrGuests,
-      'checkin': timesArray,
-      'checkout': timesArrayOut,
+      'checkin': checkInTime,
+      'checkout': checkOuTime,
       'features': newFeaturesArr,
       'description': text,
       'photos': newPhotoArr,
@@ -106,29 +103,19 @@ for (let i = 1; i <= 8; i++) {
 
 }
 
-const massiveAdd = newAdd;
-/* Здесь должна быть функция по созданию DOM-элементов из данных из массива с объектами. Но пока есть только вот это( */
-for (let j = 0; j <= 7; j++) {
+const newArrObject = newAdd;
 
-
+newArrObject.forEach(function (item) {
   const pin = document.querySelector(`#pin`).content;
-  const NewPin = pin.cloneNode(true);
-
-  const Image = NewPin.querySelector(`img`);
-  const MapPin = NewPin.querySelector(`.map__pin`);
-  Image.src = massiveAdd[j].author.avatar;
-  MapPin.style.left = massiveAdd[j].location.x + 32 + `px`;
-  MapPin.style.top = massiveAdd[j].location.y + 82 + `px`;
-  Image.alt = massiveAdd[j].offer.title;
-  MapPins.append(MapPin);
+  const newPin = pin.cloneNode(true);
+  const image = newPin.querySelector(`img`);
+  const mapPin = newPin.querySelector(`.map__pin`);
+  image.src = item.author.avatar;
+  mapPin.style.left = item.location.x + PIN_HALF_WEIGTH + `px`;
+  mapPin.style.top = item.location.y + PIN_HEIGHT + `px`;
+  image.alt = item.offer.title;
+  mapPins.append(mapPin);
 }
+);
 
 
-// Мне кажется становится всё очевидней,что я в дестве ел мало витаминов.
-// Пока у меня не получилось создать необходимую функцию по созданию DOM-элементов на основе массива объектов.
-// В голове не складывается: я понимаю,что примерно нужно сделать,но как реализовать не понимаю.
-// Могу предположить, что её (функцию) надо было поселить в первый цикл и в качестве параметра мог выступать только массив с объектами.
-// Сложность по моему мнению в следующем (сейчас речь о блоке по генерации обяъвлений с аватарками): вместо конкретного массива надо указать любой,это возможно,
-// но как без цикла подставлять номер j-того элемента этого массива? Зачем здесь функция? Конечно, с формулировками у меня туговато) Если в двух словах,
-// то я реализации задачи, без цикла, не вижу(
-// и иконки ещё какие-то корявые получились. И размещаются вне зоны видимости (не все,конечно, но часть). При этом координаты заданы на мой взгляд верные.
