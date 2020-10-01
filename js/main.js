@@ -11,61 +11,51 @@ function getRandomIntInclusive(min, max) {
 }
 
 /* Функция получения случайного индекса массива */
-function getRandomIndexfromArr(arr) {
-  return getRandomIntInclusive(0, arr.length - 1);
+function getRandomIndexFromArr(arr) {
+  return arr[getRandomIntInclusive(0, arr.length - 1)];
 }
 
-/* получение случайного значения из массива возможного количества комнат */
+/* Функция получения определенного количества случайных элементов массива */
+function getRandomElements(arr, newArr) {
+  let i = 0;
+  let count = getRandomIntInclusive(0, arr.length);
+  while (i < count) {
+    newArr.push(arr[getRandomIntInclusive(0, arr.length - 1)]);
+    i++;
+  }
+  return newArr;
+}
+
+/* количество комнат */
 const roomOptionElements = document.querySelector(`#housing-rooms`);
-let roomOptions = {};
-roomOptions = roomOptionElements[getRandomIndexfromArr(roomOptionElements, getRandomIntInclusive)].textContent;
 
-
-/* получение случайного значения из массива возможного времени заселения */
+/* время заселения */
 const times = document.querySelector(`#timein`);
-let checkInTime = {};
-checkInTime = times[getRandomIndexfromArr(times, getRandomIntInclusive)].textContent;
 
-
-/* получение случайного значения из массива возможного времени выселения */
+/*  время выселения */
 const timesOut = document.querySelector(`#timeout`);
-let checkOuTime = {};
-checkOuTime = timesOut[getRandomIndexfromArr(times, checkOuTime, getRandomIntInclusive)].textContent;
 
-/* Цена и адрес */
-const price = getRandomIntInclusive(0, 60000);
-const address = (`location.x:` + getRandomIntInclusive(0, 700) + `,` + `location.y:` + getRandomIntInclusive(130, 630));
+/* адрес */
+const valueLocationX = `120`;
+const valueLocationY = `500`;
+const address = (`location.x:` + `${valueLocationX}` + `,` + `location.y:` + `${valueLocationY}`);
 
 /* Фичи */
-const featuresArr = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
-const newFeaturesArr = [];
-for (let i = 0; i <= getRandomIntInclusive(1, featuresArr.length); i++) {
-  newFeaturesArr.push(featuresArr[i]);
-}
+const FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
+const randomFeatures = [];
 
 /* Массив фотографий объекта */
-const photos = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0.github.io/assets/images/tokyo/hotel2.jpg`, `http://o0.github.io/assets/images/tokyo/hotel3.jpg`];
+const PHOTOS = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0.github.io/assets/images/tokyo/hotel2.jpg`, `http://o0.github.io/assets/images/tokyo/hotel3.jpg`];
 const newPhotoArr = [];
-for (let i = 0; i < getRandomIntInclusive(1, photos.length); i++) {
-  newPhotoArr.push(photos[i]);
-}
 
 /* Тип помещения */
-const ArrType = [`palace`, `flat`, `house`, `bungalow`];
-let newArrType = [];
-for (let i = 0; i < getRandomIntInclusive(1, ArrType.length); i++) {
-  newArrType = ArrType[i];
-}
+const PREMISES_TYPES = [`palace`, `flat`, `house`, `bungalow`];
 
 /* Число гостей */
-const guests = [`Любое число гостей`, `Два гостя`, `Один гость`, `Не для гостей`];
-let newArrGuests = [];
-for (let i = 0; i < getRandomIntInclusive(1, guests.length); i++) {
-  newArrGuests = guests[i];
-}
+const GUESTS = [`Любое число гостей`, `Два гостя`, `Один гость`, `Не для гостей`];
 
 /* текст ( свойство: описание объекта) */
-const text = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua`;
+const TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua`;
 
 /* Добавление объявления с данными из массива*/
 const mapPins = document.querySelector(`.map__pin`);
@@ -74,25 +64,23 @@ const PIN_HALF_WEIGTH = 32;
 
 /* Генерация данных восьми объектов (объявлений) */
 const newAdd = [];
-
 for (let i = 1; i <= 8; i++) {
   let newObject = {
     'author': {
       'avatar': `img/avatars/user0` + i + `.png`,
     },
-
     'offer': {
-      'title': text,
+      'title': TEXT,
       'address': address,
-      'price': price,
-      'type': newArrType,
-      'rooms': roomOptions,
-      'guests': newArrGuests,
-      'checkin': checkInTime,
-      'checkout': checkOuTime,
-      'features': newFeaturesArr,
-      'description': text,
-      'photos': newPhotoArr,
+      'price': getRandomIntInclusive(0, 60000),
+      'type': getRandomIndexFromArr(PREMISES_TYPES),
+      'rooms': getRandomIndexFromArr(roomOptionElements).textContent,
+      'guests': getRandomIndexFromArr(GUESTS),
+      'checkin': getRandomIndexFromArr(times).textContent,
+      'checkout': getRandomIndexFromArr(timesOut).textContent,
+      'features': getRandomElements(FEATURES, randomFeatures),
+      'description': TEXT,
+      'photos': getRandomElements(PHOTOS, newPhotoArr),
     },
     'location': {
       'x': getRandomIntInclusive(0, 700),
@@ -100,7 +88,6 @@ for (let i = 1; i <= 8; i++) {
     },
   };
   newAdd.push(newObject);
-
 }
 
 const newArrObject = newAdd;
@@ -117,5 +104,3 @@ newArrObject.forEach(function (item) {
   mapPins.append(mapPin);
 }
 );
-
-
