@@ -1,7 +1,7 @@
 'use strict';
 /* Удаление класса неактивного состояния у карты */
-let map = document.querySelector(`.map`);
-map.classList.remove(`map--faded`);
+let mapBooking = document.querySelector(`.map`);
+mapBooking.classList.remove(`map--faded`);
 
 /* Функция получения случайного целого числа в диапозоне */
 function getRandomIntInclusive(min, max) {
@@ -10,43 +10,38 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-/* Функция получения случайного индекса массива */
-function getRandomIndexFromArr(arr) {
+/* Функция получения случайного элемента */
+function getRandomElement(arr) {
   return arr[getRandomIntInclusive(0, arr.length - 1)];
 }
 
 /* Функция получения определенного количества случайных элементов массива */
-function getRandomElements(arr, newArr) {
-  let i = 0;
-  let count = getRandomIntInclusive(0, arr.length);
-  while (i < count) {
-    newArr.push(arr[getRandomIntInclusive(0, arr.length - 1)]);
-    i++;
+function getRandomElements(arr) {
+  let arrCopy = [...arr]; // Копируем массив
+  let result = [];
+  let randomElementCount = getRandomIntInclusive(1, arr.length);
+  for (let i = 0; i < randomElementCount; i++) {
+    let randomIndex = getRandomIntInclusive(0, arrCopy.length - 1);
+    let elementToAdd = arrCopy.splice(randomIndex, 1);
+    result.push(elementToAdd);
   }
-  return newArr;
+  return result;
 }
 
 /* количество комнат */
-const roomOptionElements = document.querySelector(`#housing-rooms`);
+const roomOptionElementsValue = Array.from(document.querySelectorAll(`#housing-rooms`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
 
 /* время заселения */
-const times = document.querySelector(`#timein`);
+const timeIn = Array.from(document.querySelectorAll(`#timein`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
 
 /*  время выселения */
-const timesOut = document.querySelector(`#timeout`);
-
-/* адрес */
-const valueLocationX = `120`;
-const valueLocationY = `500`;
-const address = (`location.x:` + `${valueLocationX}` + `,` + `location.y:` + `${valueLocationY}`);
+const timeOut = Array.from(document.querySelectorAll(`#timeout`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
 
 /* Фичи */
 const FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
-const randomFeatures = [];
 
 /* Массив фотографий объекта */
 const PHOTOS = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0.github.io/assets/images/tokyo/hotel2.jpg`, `http://o0.github.io/assets/images/tokyo/hotel3.jpg`];
-const newPhotoArr = [];
 
 /* Тип помещения */
 const PREMISES_TYPES = [`palace`, `flat`, `house`, `bungalow`];
@@ -65,6 +60,11 @@ const PIN_HALF_WEIGTH = 32;
 /* Генерация данных восьми объектов (объявлений) */
 const newAdd = [];
 for (let i = 1; i <= 8; i++) {
+  const valueLocationX = getRandomIntInclusive(0, 1000);
+  const valueLocationY = getRandomIntInclusive(0, 700);
+  const address = `${valueLocationX}, ${valueLocationY}`;
+  const newPhotoArr = [];
+  const randomFeatures = [];
   let newObject = {
     'author': {
       'avatar': `img/avatars/user0` + i + `.png`,
@@ -73,18 +73,18 @@ for (let i = 1; i <= 8; i++) {
       'title': TEXT,
       'address': address,
       'price': getRandomIntInclusive(0, 60000),
-      'type': getRandomIndexFromArr(PREMISES_TYPES),
-      'rooms': getRandomIndexFromArr(roomOptionElements).textContent,
-      'guests': getRandomIndexFromArr(GUESTS),
-      'checkin': getRandomIndexFromArr(times).textContent,
-      'checkout': getRandomIndexFromArr(timesOut).textContent,
+      'type': getRandomElement(PREMISES_TYPES),
+      'rooms': getRandomElement(roomOptionElementsValue),
+      'guests': getRandomElement(GUESTS),
+      'checkin': getRandomElement(timeIn),
+      'checkout': getRandomElement(timeOut),
       'features': getRandomElements(FEATURES, randomFeatures),
       'description': TEXT,
       'photos': getRandomElements(PHOTOS, newPhotoArr),
     },
     'location': {
-      'x': getRandomIntInclusive(0, 700),
-      'y': getRandomIntInclusive(130, 630),
+      'x': valueLocationX,
+      'y': valueLocationY,
     },
   };
   newAdd.push(newObject);
