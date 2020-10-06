@@ -17,7 +17,7 @@ function getRandomElement(arr) {
 
 /* Функция получения определенного количества случайных элементов массива */
 function getRandomElements(arr) {
-  let arrCopy = [...arr]; // Копируем массив
+  let arrCopy = [...arr];
   let result = [];
   let randomElementCount = getRandomIntInclusive(1, arr.length);
   for (let i = 0; i < randomElementCount; i++) {
@@ -32,10 +32,10 @@ function getRandomElements(arr) {
 const roomOptionElementsValue = Array.from(document.querySelectorAll(`#housing-rooms`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
 
 /* время заселения */
-const timeIn = Array.from(document.querySelectorAll(`#timein`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
+const timesIn = Array.from(document.querySelectorAll(`#timein`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
 
 /*  время выселения */
-const timeOut = Array.from(document.querySelectorAll(`#timeout`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
+const timesOut = Array.from(document.querySelectorAll(`#timeout`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
 
 /* Фичи */
 const FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
@@ -63,8 +63,6 @@ for (let i = 1; i <= 8; i++) {
   const valueLocationX = getRandomIntInclusive(0, 1000);
   const valueLocationY = getRandomIntInclusive(0, 700);
   const address = `${valueLocationX}, ${valueLocationY}`;
-  const newPhotoArr = [];
-  const randomFeatures = [];
   let newObject = {
     'author': {
       'avatar': `img/avatars/user0` + i + `.png`,
@@ -76,11 +74,11 @@ for (let i = 1; i <= 8; i++) {
       'type': getRandomElement(PREMISES_TYPES),
       'rooms': getRandomElement(roomOptionElementsValue),
       'guests': getRandomElement(GUESTS),
-      'checkin': getRandomElement(timeIn),
-      'checkout': getRandomElement(timeOut),
-      'features': getRandomElements(FEATURES, randomFeatures),
+      'checkin': getRandomElement(timesIn),
+      'checkout': getRandomElement(timesOut),
+      'features': getRandomElements(FEATURES),
       'description': TEXT,
-      'photos': getRandomElements(PHOTOS, newPhotoArr),
+      'photos': getRandomElements(PHOTOS),
     },
     'location': {
       'x': valueLocationX,
@@ -104,3 +102,50 @@ newArrObject.forEach(function (item) {
   mapPins.append(mapPin);
 }
 );
+
+/* Новая часть */
+
+/* блок объявлений */
+/* const pins = document.querySelector(`.map-pins`);
+const templateCard = document.querySelector(`#card`).content; // шаблон объявления
+const titleCard = templateCard.querySelector(`.popup__title`); // заголовок
+const addressCard = templateCard.querySelector(`.popup__text--address`); // адрес
+const priceCard = templateCard.querySelector(`.popup__text--price`); // цена {{offer.price}}₽/ночь
+const promyseTypeCard = templateCard.querySelector(`.popup__type`); // тип жилья прописать соответствие
+const offerCard = templateCard.querySelector(`.popup__text--capacity`); // вместимость {{offer.rooms}} комнаты для {{offer.guests}} гостей
+const featuresCard = templateCard.querySelector(`.popup__features`); // фичи
+const timeInOutCard = templateCard.querySelector(`.popup__text--time`); // время заезда-выезда Заезд после {{offer.checkin}}, выезд до {{offer.checkout}}
+const descriptionCard = templateCard.querySelector(`.popup__description`); // описание
+const photoCard = templateCard.querySelector(`.popup__photos`); // фото
+const avatarCard = templateCard.querySelector(`.popup__avatar`); // аватар */
+
+/* const form = document.querySelector(`.ad-form`);
+const fieldset = form.querySelectorAll(`fieldset`);
+const addressForm = form.querySelector(`#address`);
+
+const inputFields = form.querySelectorAll(`input`);
+for (let i = 0; i < inputFields.length; i++) {
+  inputFields[i].setAttribute(`disabled`, true);
+}
+const mapFilter = document.querySelector(`.map__filters`);
+
+mapBooking.addEventListener(`mousedown`, function (evt) {
+  if (evt.which === 1) {
+    mapBooking.classList.remove(`map--faded`);
+    mapFilter.remove(`ad-form--disabled`);
+    for (let i = 0; i < inputFields.length; i++) {
+      fieldset[i].setAttribute(`disabled`, false);
+    }
+  }
+}
+);
+
+document.addEventListener(`keydown`, function (evt) {
+  if (evt.key === `Enter`) {
+    mapBooking.classList.remove(`map--faded`);
+    form.remove(`ad-form--disabled`);
+    mapFilter.remove(`ad-form--disabled`);
+    form.setAttribute(`disabled`, false);
+  }
+}
+); */
