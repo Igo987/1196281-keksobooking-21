@@ -1,8 +1,6 @@
 'use strict';
 /* Удаление класса неактивного состояния у карты */
-let map = document.querySelector(`.map`);
-map.classList.remove(`map--faded`);
-
+let mapBooking = document.querySelector(`.map`);
 
 /* Функция получения случайного целого числа в диапозоне */
 function getRandomIntInclusive(min, max) {
@@ -11,125 +9,249 @@ function getRandomIntInclusive(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-/* получение случайного значения из массива возможного количества комнат */
-const rooms = document.querySelector(`#housing-rooms`);
-let roomsArray = [];
-for (let i = 0; i <= getRandomIntInclusive(0, rooms.length); i++) {
-  roomsArray = rooms[i].textContent;
+/* Функция получения случайного элемента */
+function getRandomElement(arr) {
+  return arr[getRandomIntInclusive(0, arr.length - 1)];
 }
 
-
-/* получение случайного значения из массива возможного времени заселения */
-const times = document.querySelector(`#timein`);
-let timesArray = [];
-for (let i = 0; i <= getRandomIntInclusive(0, times.length); i++) {
-  timesArray = times[i].textContent;
+/* Функция получения определенного количества случайных элементов массива */
+function getRandomElements(arr) {
+  let arrCopy = [...arr];
+  let result = [];
+  let randomElementCount = getRandomIntInclusive(1, arr.length);
+  for (let i = 0; i < randomElementCount; i++) {
+    let randomIndex = getRandomIntInclusive(0, arrCopy.length - 1);
+    let elementToAdd = arrCopy.splice(randomIndex, 1);
+    result.push(elementToAdd);
+  }
+  return result;
 }
 
-/* получение случайного значения из массива возможного времени выселения */
-const timesOut = document.querySelector(`#timeout`);
-let timesArrayOut = [];
-for (let i = 0; i < getRandomIntInclusive(0, timesOut.length); i++) {
-  timesArrayOut = timesOut[i].textContent;
-}
+/* количество комнат */
+const roomOptionElementsValue = Array.from(document.querySelectorAll(`#housing-rooms`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
 
+/* время заселения */
+const timesIn = Array.from(document.querySelectorAll(`#timein`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
 
-const templateAdd = document.querySelector(`#card`).content;
-const address = templateAdd.querySelector(`.popup__text--address`).textContent;
-const price = templateAdd.querySelector(`.popup__text--price`).textContent;
-
+/*  время выселения */
+const timesOut = Array.from(document.querySelectorAll(`#timeout`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
 
 /* Фичи */
-const featuresArr = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
-const newFeaturesArr = [];
-for (let i = 0; i <= getRandomIntInclusive(1, featuresArr.length); i++) {
-  newFeaturesArr.push(featuresArr[i]);
-}
+const FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
 
 /* Массив фотографий объекта */
-const photos = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0.github.io/assets/images/tokyo/hotel2.jpg`, `http://o0.github.io/assets/images/tokyo/hotel3.jpg`];
-const newPhotoArr = [];
-for (let i = 0; i < getRandomIntInclusive(1, photos.length); i++) {
-  newPhotoArr.push(photos[i]);
-}
+const PHOTOS = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0.github.io/assets/images/tokyo/hotel2.jpg`, `http://o0.github.io/assets/images/tokyo/hotel3.jpg`];
 
 /* Тип помещения */
-const ArrType = [`palace`, `flat`, `house`, `bungalow`];
-let newArrType = [];
-for (let i = 0; i < getRandomIntInclusive(1, ArrType.length); i++) {
-  newArrType = ArrType[i];
-}
+const PREMISES_TYPES = [`palace`, `flat`, `house`, `bungalow`];
 
 /* Число гостей */
-const guests = [`Любое число гостей`, `Два гостя`, `Один гость`, `Не для гостей`];
-let newArrGuests = [];
-for (let i = 0; i < getRandomIntInclusive(1, guests.length); i++) {
-  newArrGuests = guests[i];
-}
+const GUESTS = [`Любое число гостей`, `Два гостя`, `Один гость`, `Не для гостей`];
 
 /* текст ( свойство: описание объекта) */
-const text = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua`;
+const TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua`;
 
 /* Добавление объявления с данными из массива*/
-const MapPins = document.querySelector(`.map__pin`);
-/* const Pin = document.querySelector('#pin').content;
- let newPin = Pin.cloneNode(true); */
+const mapPins = document.querySelector(`.map__pin`);
+const PIN_HEIGHT = 84;
+const PIN_HALF_WEIGTH = 32;
 
 /* Генерация данных восьми объектов (объявлений) */
 const newAdd = [];
-
 for (let i = 1; i <= 8; i++) {
+  const valueLocationX = getRandomIntInclusive(0, 1000);
+  const valueLocationY = getRandomIntInclusive(0, 700);
+  const address = `${valueLocationX}, ${valueLocationY}`;
   let newObject = {
     'author': {
       'avatar': `img/avatars/user0` + i + `.png`,
     },
-
     'offer': {
-      'title': text,
+      'title': TEXT,
       'address': address,
-      'price': price,
-      'type': newArrType,
-      'rooms': roomsArray,
-      'guests': newArrGuests,
-      'checkin': timesArray,
-      'checkout': timesArrayOut,
-      'features': newFeaturesArr,
-      'description': text,
-      'photos': newPhotoArr,
+      'price': getRandomIntInclusive(0, 60000),
+      'type': getRandomElement(PREMISES_TYPES),
+      'rooms': getRandomElement(roomOptionElementsValue),
+      'guests': getRandomElement(GUESTS),
+      'checkin': getRandomElement(timesIn),
+      'checkout': getRandomElement(timesOut),
+      'features': getRandomElements(FEATURES),
+      'description': TEXT,
+      'photos': getRandomElements(PHOTOS),
     },
     'location': {
-      'x': getRandomIntInclusive(0, 700),
-      'y': getRandomIntInclusive(130, 630),
+      'x': valueLocationX,
+      'y': valueLocationY,
     },
   };
   newAdd.push(newObject);
-
 }
 
-const massiveAdd = newAdd;
-/* Здесь должна быть функция по созданию DOM-элементов из данных из массива с объектами. Но пока есть только вот это( */
-for (let j = 0; j <= 7; j++) {
+const newArrObject = newAdd;
 
-
+newArrObject.forEach(function (item) {
   const pin = document.querySelector(`#pin`).content;
-  const NewPin = pin.cloneNode(true);
+  const newPin = pin.cloneNode(true);
+  const image = newPin.querySelector(`img`);
+  const mapPin = newPin.querySelector(`.map__pin`);
+  image.src = item.author.avatar;
+  mapPin.style.left = item.location.x + PIN_HALF_WEIGTH + `px`;
+  mapPin.style.top = item.location.y + PIN_HEIGHT + `px`;
+  image.alt = item.offer.title;
+  mapPins.append(mapPin);
+}
+);
 
-  const Image = NewPin.querySelector(`img`);
-  const MapPin = NewPin.querySelector(`.map__pin`);
-  Image.src = massiveAdd[j].author.avatar;
-  MapPin.style.left = massiveAdd[j].location.x + 32 + `px`;
-  MapPin.style.top = massiveAdd[j].location.y + 82 + `px`;
-  Image.alt = massiveAdd[j].offer.title;
-  MapPins.append(MapPin);
+/* Новая часть */
+/* блок объявлений */
+const filterContainers = document.querySelector(`.map__filters-container`);
+
+const Card = document.querySelector(`#card`); // шаблон объявления
+const newCard = Card.content.cloneNode(true); // клонирование шаблона
+
+let titleCard = newCard.querySelector(`.popup__title`); // заголовок
+let addressCard = newCard.querySelector(`.popup__text--address`); // адрес
+let priceCard = newCard.querySelector(`.popup__text--price`); // цена {{offer.price}}₽/ночь
+let promyseTypeCard = newCard.querySelector(`.popup__type`); // тип жилья прописать соответствие
+let offerCard = newCard.querySelector(`.popup__text--capacity`); // вместимость {{offer.rooms}} комнаты для {{offer.guests}} гостей
+let featuresCard = newCard.querySelectorAll(`.popup__feature`); // фичи
+let timesInOutCard = newCard.querySelector(`.popup__text--time`); // время заезда-выезда Заезд после {{offer.checkin}}, выезд до {{offer.checkout}}
+let descriptionCard = newCard.querySelector(`.popup__description`); // описание
+let photosCard = newCard.querySelector(`.popup__photos`); // блок фото
+let photoCard = newCard.querySelector(`.popup__photo`); // фотографии
+let avatarCard = newCard.querySelector(`.popup__avatar`); // аватар
+
+titleCard.textContent = newArrObject[0].offer.title;
+
+/* АДРЕС*/
+addressCard.textContent = newArrObject[0].offer.address;
+
+/* ЦЕНА */
+priceCard.textContent = `Цена ` + newArrObject[0].offer.price + `₽/ночь`;
+
+/* ТИП ПОМЕЩЕНИЯ */
+switch (newArrObject[0].offer.type) {
+  case `palace`: promyseTypeCard.textContent = `Дворец`;
+    break;
+  case `bungalow`: promyseTypeCard.textContent = `Бунгало`;
+    break;
+  case `flat`: promyseTypeCard.textContent = `Квартира`;
+    break;
+  case `house`: promyseTypeCard.textContent = `Дом`;
 }
 
+/* КОЛИЧЕСТВО КОМНАТ ДЛЯ __ ГОСТЕЙ */
+offerCard.textContent = newArrObject[0].offer.rooms + ` для ` + newArrObject[0].offer.guests.toLowerCase();
 
-// Мне кажется становится всё очевидней,что я в дестве ел мало витаминов.
-// Пока у меня не получилось создать необходимую функцию по созданию DOM-элементов на основе массива объектов.
-// В голове не складывается: я понимаю,что примерно нужно сделать,но как реализовать не понимаю.
-// Могу предположить, что её (функцию) надо было поселить в первый цикл и в качестве параметра мог выступать только массив с объектами.
-// Сложность по моему мнению в следующем (сейчас речь о блоке по генерации обяъвлений с аватарками): вместо конкретного массива надо указать любой,это возможно,
-// но как без цикла подставлять номер j-того элемента этого массива? Зачем здесь функция? Конечно, с формулировками у меня туговато) Если в двух словах,
-// то я реализации задачи, без цикла, не вижу(
-// и иконки ещё какие-то корявые получились. И размещаются вне зоны видимости (не все,конечно, но часть). При этом координаты заданы на мой взгляд верные.
+/* ВРЕМЯ ЗАЕЗДА & ВЫЕЗДА */
+timesInOutCard.textContent = `Заезд ` + newArrObject[0].offer.checkin.toLowerCase() + `, ` + newArrObject[0].offer.checkout.toLowerCase();
+
+/* ФОТКИ ОБЪЕКТА */
+photoCard.remove();
+for (let i = 0; i < newArrObject[0].offer.photos.length; i++) {
+  let clonePhoto = photoCard.cloneNode(false);
+  photosCard.append(clonePhoto);
+  clonePhoto.src = newArrObject[0].offer.photos[i];
+}
+
+/* ОПИСАНИЕ */
+descriptionCard.textContent = newArrObject[0].offer.description;
+
+/* АВАТАР */
+avatarCard.src = newArrObject[0].author.avatar;
+
+/* ВСТАВКА КАРТОЧКИ ОБЪЯВЛЕНИЯ */
+filterContainers.prepend(newCard);
+
+/* ФОРМА ОБЪЯВЛЕНИЯ */
+const form = document.querySelector(`.ad-form`);
+const fieldset = form.querySelectorAll(`fieldset`);
+
+/* НЕАКТИВНЫЕ ЭЛЕМЕНТЫ ФОРМЫ  (ДОЛЖНЫ БЫТЬ) */
+const inputFields = form.querySelectorAll(`input`);
+
+for (let i = 0; i < inputFields.length; i++) {
+  inputFields[i].setAttribute(`disabled`, true);
+}
+const mapFilter = document.querySelector(`.map__filters`);
+mapFilter.classList.add(`ad-form--disabled`); // добавление блокировки
+
+
+/* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */
+const popup = document.querySelector(`.map__card`);
+
+popup.hidden = true;
+mapBooking.addEventListener(`mousedown`, function (evt) {
+  if (evt.which === 1) {
+    mapBooking.classList.remove(`map--faded`);
+    mapFilter.classList.remove(`ad-form--disabled`);
+    popup.hidden = false;
+    form.classList.remove(`ad-form--disabled`);
+    for (let i = 0; i < inputFields.length; i++) {
+      fieldset[i].setAttribute(`disabled`, false);
+    }
+  }
+}
+);
+
+document.addEventListener(`keydown`, function (evt) {
+  if (evt.key === `Enter`) {
+    mapBooking.classList.remove(`map--faded`);
+    mapFilter.classList.remove(`ad-form--disabled`);
+    popup.hidden = false;
+    form.classList.remove(`ad-form--disabled`);
+    form.setAttribute(`disabled`, false);
+  }
+}
+);
+
+/*   ПЕРЕМЕЩЕНИЕ МЕТКИ */
+let logoPin = document.querySelector(`.map__pin--main`);
+logoPin.addEventListener(`mousedown`, function (evt) {
+  evt.preventDefault();
+
+  let startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  let onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    const shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    logoPin.style.top = (logoPin.offsetTop - shift.y) + `px`;
+    logoPin.style.left = (logoPin.offsetLeft - shift.x) + `px`;
+  };
+
+  const onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener(`mousemove`, onMouseMove);
+    document.removeEventListener(`mouseup`, onMouseUp);
+  };
+
+  document.addEventListener(`mousemove`, onMouseMove);
+  document.addEventListener(`mouseup`, onMouseUp);
+}
+);
+
+/* ФИЧИ */
+let valueFeatures = newArrObject[0].offer.features;
+const arrFeatures = Array.from(featuresCard);
+for (let i = 0; i < valueFeatures.length; i++) {
+  let getFeatureClass = `popup__feature--` + valueFeatures[i];
+  let classAvailable = arrFeatures.forEach((el) => el.classList.contains(getFeatureClass));
+  if (!classAvailable) {
+    arrFeatures[i].remove();
+  }
+}
 
