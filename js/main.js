@@ -154,6 +154,17 @@ for (let i = 0; i < newArrObject[0].offer.photos.length; i++) {
   clonePhoto.src = newArrObject[0].offer.photos[i];
 }
 
+document.addEventListener(`keydown`, function (evt) {
+  if (evt.key === `Enter`) {
+    mapBooking.classList.remove(`map--faded`);
+    mapFilter.classList.remove(`ad-form--disabled`);
+    popup.hidden = false;
+    form.classList.remove(`ad-form--disabled`);
+    form.setAttribute(`disabled`, false);
+  }
+}
+);
+
 /* ОПИСАНИЕ */
 descriptionCard.textContent = newArrObject[0].offer.description;
 
