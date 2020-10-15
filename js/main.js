@@ -90,9 +90,7 @@ const getSomeObjects = () => {
   return newAdd;
 };
 
-
 const newArrObjects = getSomeObjects();
-
 newArrObjects.forEach(function (item) {
   const pin = document.querySelector(`#pin`).content;
   const newPin = pin.cloneNode(true);
@@ -125,7 +123,6 @@ let cardPhoto = newCard.querySelector(`.popup__photo`); // фотографии
 let cardAvatar = newCard.querySelector(`.popup__avatar`); // аватар
 
 cardTitle.textContent = newArrObjects[0].offer.title;
-
 /* АДРЕС*/
 cardAddress.textContent = newArrObjects[0].offer.address;
 
@@ -179,40 +176,10 @@ for (let i = 0; i < inputFields.length; i++) {
 const mapFilter = document.querySelector(`.map__filters`);
 mapFilter.classList.add(`ad-form--disabled`); // добавление блокировки
 
-
-/* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */
-const popup = document.querySelector(`.map__card`);
-
-popup.hidden = true;
-mapBooking.addEventListener(`mousedown`, function (evt) {
-  if (evt.which === 1) {
-    mapBooking.classList.remove(`map--faded`);
-    mapFilter.classList.remove(`ad-form--disabled`);
-    popup.hidden = false;
-    form.classList.remove(`ad-form--disabled`);
-    for (let i = 0; i < inputFields.length; i++) {
-      fieldset[i].removeAttribute(`disabled`);
-    }
-  }
-}
-);
-
-document.addEventListener(`keydown`, function (evt) {
-  if (evt.key === `Enter`) {
-    mapBooking.classList.remove(`map--faded`);
-    mapFilter.classList.remove(`ad-form--disabled`);
-    popup.hidden = false;
-    form.classList.remove(`ad-form--disabled`);
-    form.removeAttribute(`disabled`);
-  }
-}
-);
-
 /*   ПЕРЕМЕЩЕНИЕ МЕТКИ */
 let logoPin = document.querySelector(`.map__pin--main`);
 logoPin.addEventListener(`mousedown`, function (evt) {
   evt.preventDefault();
-
   let startCoords = {
     x: evt.clientX,
     y: evt.clientY
@@ -247,6 +214,43 @@ logoPin.addEventListener(`mousedown`, function (evt) {
 }
 );
 
+/* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */
+const popup = document.querySelector(`.map__card`);
+let addressForm = form.querySelector(`#address`);
+const MAP_PIN_SIZE = 31; // половина ширины и высоты main pin (получаем её центр);
+addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
+
+popup.hidden = true;
+
+mapBooking.addEventListener(`mousedown`, function (evt) {
+  if (evt.which === 1) {
+    mapBooking.classList.remove(`map--faded`);
+    mapFilter.classList.remove(`ad-form--disabled`);
+    popup.hidden = false;
+    form.classList.remove(`ad-form--disabled`);
+    for (let i = 0; i < inputFields.length; i++) {
+      fieldset[i].removeAttribute(`disabled`);
+    }
+  }
+  logoPin.addEventListener(`mousemove`, function () {
+    addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
+  });
+});
+
+document.addEventListener(`keydown`, function (evt) {
+  if (evt.key === `Enter`) {
+    mapBooking.classList.remove(`map--faded`);
+    mapFilter.classList.remove(`ad-form--disabled`);
+    popup.hidden = false;
+    form.classList.remove(`ad-form--disabled`);
+    form.removeAttribute(`disabled`);
+  }
+  logoPin.addEventListener(`mousemove`, function () {
+    addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
+  });
+}
+);
+
 /* ФИЧИ */
 let valueFeatures = newArrObjects[0].offer.features;
 const arrFeatures = Array.from(cardFeatures);
@@ -261,36 +265,16 @@ for (let i = 0; i < valueFeatures.length; i++) {
 /* ВАЛИДАЦИЯ ГРАФ "КОЛИЧЕСТВО КОМНАТ" И "КОЛИЧЕСТВО ГОСТЕЙ" */
 const inputRoom = document.querySelector(`#room_number`); // КОМНАТА
 const inputCapacity = document.querySelector(`#capacity`); // ГОСТЬ
-// let inputRoomValues = Array.from(inputRoom);
+let inputRoomValues = Array.from(inputRoom);
 let inputCapacityValues = Array.from(inputCapacity).reverse();
-
-/* inputRoom.addEventListener(`change`, function (e) {
-  for (let i = 0; i < inputRoom.length; i++) {
-    if (inputCapacityValues[i].value > e.currentTarget.value) {
-      for (let j = e.currentTarget.value; j < inputCapacityValues.length; j++) {
-        inputCapacityValues[j].disabled = true;
-      }
-    }
-    else {
-      inputCapacityValues[i].disabled = false;
-    }
-
-    if (e.currentTarget.value === `100`) {
-      inputCapacity[2].disabled = `true`;
-    }
-  }
-}); */
-
 
 inputRoom.addEventListener(`change`, function (e) {
   for (let i = 0; i < inputCapacityValues.length; i++) {
-
     if (inputCapacityValues[i].value > e.currentTarget.value) {
       inputCapacityValues[i].disabled = true;
     } else {
       inputCapacityValues[i].disabled = false;
     }
-
   }
 });
 
