@@ -27,6 +27,7 @@ function getRandomElements(arr) {
   return result;
 }
 
+
 /* количество комнат */
 const roomOptionElementsValue = Array.from(document.querySelectorAll(`#housing-rooms`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
 
@@ -122,13 +123,12 @@ let cardPhotos = newCard.querySelector(`.popup__photos`); // блок фото
 let cardPhoto = newCard.querySelector(`.popup__photo`); // фотографии
 let cardAvatar = newCard.querySelector(`.popup__avatar`); // аватар
 
+/* ОПИСАНИЕ */
 cardTitle.textContent = newArrObjects[0].offer.title;
 /* АДРЕС*/
 cardAddress.textContent = newArrObjects[0].offer.address;
-
 /* ЦЕНА */
 cardPrice.textContent = `Цена ` + newArrObjects[0].offer.price + `₽/ночь`;
-
 /* ТИП ПОМЕЩЕНИЯ */
 switch (newArrObjects[0].offer.type) {
   case `palace`: cardPromyseType.textContent = `Дворец`;
@@ -139,20 +139,17 @@ switch (newArrObjects[0].offer.type) {
     break;
   case `house`: cardPromyseType.textContent = `Дом`;
 }
-
 /* КОЛИЧЕСТВО КОМНАТ ДЛЯ __ ГОСТЕЙ */
-cardOffer = `${newArrObjects[0].offer.rooms}` + `комнаты для ` + `${newArrObjects[0].offer.guests}` + `гостей`;
-
+/* cardOffer = `${newArrObjects[0].offer.rooms}` + `комнаты для ` + `${newArrObjects[0].offer.guests}` + `гостей`; */
 /* ВРЕМЯ ЗАЕЗДА & ВЫЕЗДА */
-cardTimesInOut = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`;
-
+/* cardTimesInOut = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`; */
 /* ФОТКИ ОБЪЕКТА */
-cardPhoto.remove();
+/* cardPhoto.remove();
 for (let i = 0; i < newArrObjects[0].offer.photos.length; i++) {
   let clonePhoto = cardPhoto.cloneNode(false);
   cardPhotos.append(clonePhoto);
   clonePhoto.src = newArrObjects[0].offer.photos[i];
-}
+} */
 
 /* ОПИСАНИЕ */
 cardDescription.textContent = newArrObjects[0].offer.description;
@@ -169,12 +166,14 @@ const fieldset = form.querySelectorAll(`fieldset`);
 
 /* НЕАКТИВНЫЕ ЭЛЕМЕНТЫ ФОРМЫ  (ДОЛЖНЫ БЫТЬ) */
 const inputFields = form.querySelectorAll(`fieldset`);
-
 for (let i = 0; i < inputFields.length; i++) {
   inputFields[i].setAttribute(`disabled`, true);
 }
 const mapFilter = document.querySelector(`.map__filters`);
 mapFilter.classList.add(`ad-form--disabled`); // добавление блокировки
+
+/* ФОТО*/
+cardPhoto.remove();
 
 /*   ПЕРЕМЕЩЕНИЕ МЕТКИ */
 let logoPin = document.querySelector(`.map__pin--main`);
@@ -233,7 +232,7 @@ mapBooking.addEventListener(`mousedown`, function (evt) {
     }
   }
   logoPin.addEventListener(`mousemove`, function () {
-    addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
+    addressForm.value = (logoPin.getBoundingClientRect().x) + `,` + (logoPin.getBoundingClientRect().y);
   });
 });
 
@@ -246,13 +245,13 @@ document.addEventListener(`keydown`, function (evt) {
     form.removeAttribute(`disabled`);
   }
   logoPin.addEventListener(`mousemove`, function () {
-    addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
+    addressForm.value = (logoPin.getBoundingClientRect().x) + `,` + (logoPin.getBoundingClientRect().y);
   });
 }
 );
 
 /* ФИЧИ */
-let valueFeatures = newArrObjects[0].offer.features;
+/* let valueFeatures = newArrObjects[0].offer.features;
 const arrFeatures = Array.from(cardFeatures);
 for (let i = 0; i < valueFeatures.length; i++) {
   let getFeatureClass = `popup__feature--` + valueFeatures[i];
@@ -260,7 +259,7 @@ for (let i = 0; i < valueFeatures.length; i++) {
   if (!classAvailable) {
     arrFeatures[i].remove();
   }
-}
+} */
 
 /* ВАЛИДАЦИЯ ГРАФ "КОЛИЧЕСТВО КОМНАТ" И "КОЛИЧЕСТВО ГОСТЕЙ" */
 const inputRoom = document.querySelector(`#room_number`); // КОМНАТА
@@ -278,3 +277,68 @@ inputRoom.addEventListener(`change`, function (e) {
   }
 });
 
+/* ЗАКРЫТИЕ POPUP */
+const closePopup = popup.querySelector(`.popup__close`);
+
+closePopup.addEventListener(`click`, function () {
+  popup.hidden = true;
+});
+
+document.addEventListener(`keydown`, function (evt) {
+  if (evt.key === `Escape`) {
+    popup.hidden = true;
+  }
+  if (evt.key === `Enter`) {
+    popup.hidden = false;
+  }
+});
+
+/*  ВЫВОД В POPUP ВЫБРАННОГО ОБЪЯВЛЕНИЯ */
+const allButtonsInPins = mapPins.querySelectorAll(`button`);
+
+for (let buttonsPin of allButtonsInPins) {
+  buttonsPin.addEventListener(`click`, function () {
+    let Index = newArrObjects.map(item => item.author.avatar).indexOf(this.firstChild.src.split(``).slice(-22).join(``));
+    /* ОПИСАНИЕ */
+    cardTitle.textContent = newArrObjects[Index].offer.title;
+    /* АДРЕС*/
+    cardAddress.textContent = newArrObjects[Index].offer.address;
+    /* ЦЕНА */
+    cardPrice.textContent = `Цена ` + newArrObjects[Index].offer.price + `₽/ночь`;
+
+    /* ТИП ПОМЕЩЕНИЯ */
+    switch (newArrObjects[Index].offer.type) {
+      case `palace`: cardPromyseType.textContent = `Дворец`;
+        break;
+      case `bungalow`: cardPromyseType.textContent = `Бунгало`;
+        break;
+      case `flat`: cardPromyseType.textContent = `Квартира`;
+        break;
+      case `house`: cardPromyseType.textContent = `Дом`;
+    }
+
+    /* КОЛИЧЕСТВО КОМНАТ ДЛЯ __ ГОСТЕЙ */
+    cardOffer.textContent = `${newArrObjects[Index].offer.rooms.toLowerCase()}` + ` для ` + `${newArrObjects[Index].offer.guests.toLowerCase()}`;
+
+    /* ВРЕМЯ ЗАЕЗДА & ВЫЕЗДА */
+    cardTimesInOut.textContent = `Заезд` + `${newArrObjects[Index].offer.checkin.toLowerCase()}` + `,` + `${newArrObjects[Index].offer.checkout.toLowerCase()}`;
+
+    /* ФОТКИ ОБЪЕКТА */
+    cardPhoto.remove();
+    for (let i = 0; i < newArrObjects[Index].offer.photos.length; i++) {
+      let clonePhoto = cardPhoto.cloneNode(false);
+      cardPhotos.append(clonePhoto);
+      clonePhoto.src = newArrObjects[Index].offer.photos[i];
+    }
+
+    /* ОПИСАНИЕ */
+    cardDescription.textContent = newArrObjects[Index].offer.description;
+
+    /* АВАТАР */
+    cardAvatar.src = newArrObjects[Index].author.avatar;
+
+    /* ФИЧИ */
+    cardFeatures.textContent = newArrObjects[Index].offer.features;
+  }
+  );
+}
