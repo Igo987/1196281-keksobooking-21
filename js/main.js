@@ -264,33 +264,13 @@ const inputCapacity = document.querySelector(`#capacity`); // ГОСТЬ
 // let inputRoomValues = Array.from(inputRoom);
 let inputCapacityValues = Array.from(inputCapacity).reverse();
 
-/* inputRoom.addEventListener(`change`, function (e) {
-  for (let i = 0; i < inputRoom.length; i++) {
-    if (inputCapacityValues[i].value > e.currentTarget.value) {
-      for (let j = e.currentTarget.value; j < inputCapacityValues.length; j++) {
-        inputCapacityValues[j].disabled = true;
-      }
-    }
-    else {
-      inputCapacityValues[i].disabled = false;
-    }
-
-    if (e.currentTarget.value === `100`) {
-      inputCapacity[2].disabled = `true`;
-    }
-  }
-}); */
-
-
 inputRoom.addEventListener(`change`, function (e) {
   for (let i = 0; i < inputCapacityValues.length; i++) {
-
     if (inputCapacityValues[i].value > e.currentTarget.value) {
       inputCapacityValues[i].disabled = true;
     } else {
       inputCapacityValues[i].disabled = false;
     }
-
   }
 });
 
