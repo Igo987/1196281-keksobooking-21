@@ -144,10 +144,10 @@ switch (newArrObjects[0].offer.type) {
 }
 
 /* КОЛИЧЕСТВО КОМНАТ ДЛЯ __ ГОСТЕЙ */
-cardOffer = `${newArrObjects[0].offer.rooms}` + `комнаты для ` + `${newArrObjects[0].offer.guests}` + `гостей`;
+cardOffer.textContent = `${newArrObjects[0].offer.rooms}` + `комнаты для ` + `${newArrObjects[0].offer.guests}` + `гостей`;
 
 /* ВРЕМЯ ЗАЕЗДА & ВЫЕЗДА */
-cardTimesInOut = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`;
+cardTimesInOut.textContent = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`;
 
 /* ФОТКИ ОБЪЕКТА */
 cardPhoto.remove();
