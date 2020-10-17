@@ -145,12 +145,12 @@ cardOffer.textContent = `${newArrObjects[0].offer.rooms}` + `комнаты дл
 cardTimesInOut.textContent = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`;
 
 /* ФОТКИ ОБЪЕКТА */
- cardPhoto.remove();
+cardPhoto.remove();
 for (let i = 0; i < newArrObjects[0].offer.photos.length; i++) {
   let clonePhoto = cardPhoto.cloneNode(false);
   cardPhotos.append(clonePhoto);
   clonePhoto.src = newArrObjects[0].offer.photos[i];
-} 
+};
 
 /* ОПИСАНИЕ */
 cardDescription.textContent = newArrObjects[0].offer.description;
@@ -247,10 +247,20 @@ document.addEventListener(`keydown`, function (evt) {
   });
 });
 
+/* ФИЧИ */
+let valueFeatures = newArrObjects[0].offer.features;
+const arrFeatures = Array.from(cardFeatures);
+for (let i = 0; i < valueFeatures.length; i++) {
+  let getFeatureClass = `popup__feature--` + valueFeatures[i];
+  let classAvailable = arrFeatures.forEach((el) => el.classList.contains(getFeatureClass));
+  if (!classAvailable) {
+    arrFeatures[i].remove();
+  }
+};
+
 /* ВАЛИДАЦИЯ ГРАФ "КОЛИЧЕСТВО КОМНАТ" И "КОЛИЧЕСТВО ГОСТЕЙ" */
 const inputRoom = document.querySelector(`#room_number`); // КОМНАТА
 const inputCapacity = document.querySelector(`#capacity`); // ГОСТЬ
-let inputRoomValues = Array.from(inputRoom);
 let inputCapacityValues = Array.from(inputCapacity).reverse();
 
 inputRoom.addEventListener(`change`, function (e) {
@@ -262,6 +272,3 @@ inputRoom.addEventListener(`change`, function (e) {
     }
   }
 });
-
-
- 
