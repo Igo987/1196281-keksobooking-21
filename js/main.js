@@ -90,7 +90,6 @@ const getSomeObjects = () => {
   return newAdd;
 };
 
-
 const newArrObjects = getSomeObjects();
 
 newArrObjects.forEach(function (item) {
@@ -179,7 +178,6 @@ for (let i = 0; i < inputFields.length; i++) {
 const mapFilter = document.querySelector(`.map__filters`);
 mapFilter.classList.add(`ad-form--disabled`); // добавление блокировки
 
-
 /* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */
 const popup = document.querySelector(`.map__card`);
 
@@ -194,8 +192,7 @@ mapBooking.addEventListener(`mousedown`, function (evt) {
       fieldset[i].removeAttribute(`disabled`);
     }
   }
-}
-);
+});
 
 document.addEventListener(`keydown`, function (evt) {
   if (evt.key === `Enter`) {
@@ -273,4 +270,3 @@ inputRoom.addEventListener(`change`, function (e) {
     }
   }
 });
-
