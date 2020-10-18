@@ -144,12 +144,12 @@ switch (newArrObjects[0].offer.type) {
 /* ВРЕМЯ ЗАЕЗДА & ВЫЕЗДА */
 /* cardTimesInOut = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`; */
 /* ФОТКИ ОБЪЕКТА */
-/* cardPhoto.remove();
+cardPhoto.remove();
 for (let i = 0; i < newArrObjects[0].offer.photos.length; i++) {
   let clonePhoto = cardPhoto.cloneNode(false);
   cardPhotos.append(clonePhoto);
   clonePhoto.src = newArrObjects[0].offer.photos[i];
-} */
+}
 
 /* ОПИСАНИЕ */
 cardDescription.textContent = newArrObjects[0].offer.description;
@@ -218,11 +218,13 @@ const popup = document.querySelector(`.map__card`);
 let addressForm = form.querySelector(`#address`);
 const MAP_PIN_SIZE = 31; // половина ширины и высоты main pin (получаем её центр);
 addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
-
 popup.hidden = true;
 
-mapBooking.addEventListener(`mousedown`, function (evt) {
-  if (evt.which === 1) {
+const removingTheLock = (evt) => {
+  if (evt.button !== 0) {
+    return;
+  }
+  if ((evt.button === 0) || (evt.key === `Enter`)) {
     mapBooking.classList.remove(`map--faded`);
     mapFilter.classList.remove(`ad-form--disabled`);
     popup.hidden = false;
@@ -234,24 +236,14 @@ mapBooking.addEventListener(`mousedown`, function (evt) {
   logoPin.addEventListener(`mousemove`, function () {
     addressForm.value = (logoPin.getBoundingClientRect().x) + `,` + (logoPin.getBoundingClientRect().y);
   });
-});
+  logoPin.removeEventListener(evt, removingTheLock);
+};
 
-document.addEventListener(`keydown`, function (evt) {
-  if (evt.key === `Enter`) {
-    mapBooking.classList.remove(`map--faded`);
-    mapFilter.classList.remove(`ad-form--disabled`);
-    popup.hidden = false;
-    form.classList.remove(`ad-form--disabled`);
-    form.removeAttribute(`disabled`);
-  }
-  logoPin.addEventListener(`mousemove`, function () {
-    addressForm.value = (logoPin.getBoundingClientRect().x) + `,` + (logoPin.getBoundingClientRect().y);
-  });
-}
-);
+logoPin.addEventListener(`mousedown`, removingTheLock);
+logoPin.addEventListener(`keydown`, removingTheLock);
 
 /* ФИЧИ */
-/* let valueFeatures = newArrObjects[0].offer.features;
+let valueFeatures = newArrObjects[0].offer.features;
 const arrFeatures = Array.from(cardFeatures);
 for (let i = 0; i < valueFeatures.length; i++) {
   let getFeatureClass = `popup__feature--` + valueFeatures[i];
@@ -259,12 +251,11 @@ for (let i = 0; i < valueFeatures.length; i++) {
   if (!classAvailable) {
     arrFeatures[i].remove();
   }
-} */
+}
 
 /* ВАЛИДАЦИЯ ГРАФ "КОЛИЧЕСТВО КОМНАТ" И "КОЛИЧЕСТВО ГОСТЕЙ" */
 const inputRoom = document.querySelector(`#room_number`); // КОМНАТА
 const inputCapacity = document.querySelector(`#capacity`); // ГОСТЬ
-let inputRoomValues = Array.from(inputRoom);
 let inputCapacityValues = Array.from(inputCapacity).reverse();
 
 inputRoom.addEventListener(`change`, function (e) {
@@ -295,6 +286,7 @@ document.addEventListener(`keydown`, function (evt) {
 
 /*  ВЫВОД В POPUP ВЫБРАННОГО ОБЪЯВЛЕНИЯ */
 const allButtonsInPins = mapPins.querySelectorAll(`button`);
+
 
 for (let buttonsPin of allButtonsInPins) {
   buttonsPin.addEventListener(`click`, function () {
