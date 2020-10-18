@@ -91,6 +91,7 @@ const getSomeObjects = () => {
 };
 
 const newArrObjects = getSomeObjects();
+
 newArrObjects.forEach(function (item) {
   const pin = document.querySelector(`#pin`).content;
   const newPin = pin.cloneNode(true);
@@ -141,10 +142,10 @@ switch (newArrObjects[0].offer.type) {
 }
 
 /* КОЛИЧЕСТВО КОМНАТ ДЛЯ __ ГОСТЕЙ */
-cardOffer = `${newArrObjects[0].offer.rooms}` + `комнаты для ` + `${newArrObjects[0].offer.guests}` + `гостей`;
+cardOffer.textContent = `${newArrObjects[0].offer.rooms}` + `комнаты для ` + `${newArrObjects[0].offer.guests}` + `гостей`;
 
 /* ВРЕМЯ ЗАЕЗДА & ВЫЕЗДА */
-cardTimesInOut = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`;
+cardTimesInOut.textContent = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`;
 
 /* ФОТКИ ОБЪЕКТА */
 cardPhoto.remove();
@@ -167,7 +168,7 @@ filterContainers.prepend(newCard);
 const form = document.querySelector(`.ad-form`);
 const fieldset = form.querySelectorAll(`fieldset`);
 
-/* НЕАКТИВНЫЕ ЭЛЕМЕНТЫ ФОРМЫ  (ДОЛЖНЫ БЫТЬ) */
+/* НЕАКТИВНЫЕ ЭЛЕМЕНТЫ ФОРМЫ (ДОЛЖНЫ БЫТЬ) */
 const inputFields = form.querySelectorAll(`fieldset`);
 
 for (let i = 0; i < inputFields.length; i++) {
@@ -180,6 +181,7 @@ mapFilter.classList.add(`ad-form--disabled`); // добавление блоки
 let logoPin = document.querySelector(`.map__pin--main`);
 logoPin.addEventListener(`mousedown`, function (evt) {
   evt.preventDefault();
+
   let startCoords = {
     x: evt.clientX,
     y: evt.clientY
@@ -218,10 +220,8 @@ logoPin.addEventListener(`mousedown`, function (evt) {
 const popup = document.querySelector(`.map__card`);
 let addressForm = form.querySelector(`#address`);
 const MAP_PIN_SIZE = 31; // половина ширины и высоты main pin (получаем её центр);
-addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
-
 popup.hidden = true;
-
+const 
 mapBooking.addEventListener(`mousedown`, function (evt) {
   if (evt.which === 1) {
     mapBooking.classList.remove(`map--faded`);
@@ -232,9 +232,6 @@ mapBooking.addEventListener(`mousedown`, function (evt) {
       fieldset[i].removeAttribute(`disabled`);
     }
   }
-  logoPin.addEventListener(`mousemove`, function () {
-    addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
-  });
 });
 
 document.addEventListener(`keydown`, function (evt) {
@@ -245,11 +242,12 @@ document.addEventListener(`keydown`, function (evt) {
     form.classList.remove(`ad-form--disabled`);
     form.removeAttribute(`disabled`);
   }
-  logoPin.addEventListener(`mousemove`, function () {
-    addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
-  });
 }
 );
+/* КООРДИНАТЫ МЕТКИ (pin__main)*/
+logoPin.addEventListener(`mousemove`, function () {
+  addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE); // УКАЗАНИЕ КООРДИНАТ
+});
 
 /* ФИЧИ */
 let valueFeatures = newArrObjects[0].offer.features;
@@ -265,7 +263,7 @@ for (let i = 0; i < valueFeatures.length; i++) {
 /* ВАЛИДАЦИЯ ГРАФ "КОЛИЧЕСТВО КОМНАТ" И "КОЛИЧЕСТВО ГОСТЕЙ" */
 const inputRoom = document.querySelector(`#room_number`); // КОМНАТА
 const inputCapacity = document.querySelector(`#capacity`); // ГОСТЬ
-let inputRoomValues = Array.from(inputRoom);
+// let inputRoomValues = Array.from(inputRoom);
 let inputCapacityValues = Array.from(inputCapacity).reverse();
 
 inputRoom.addEventListener(`change`, function (e) {
@@ -277,5 +275,3 @@ inputRoom.addEventListener(`change`, function (e) {
     }
   }
 });
-
-
