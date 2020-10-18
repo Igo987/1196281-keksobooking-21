@@ -27,7 +27,6 @@ function getRandomElements(arr) {
   return result;
 }
 
-
 /* количество комнат */
 const roomOptionElementsValue = Array.from(document.querySelectorAll(`#housing-rooms`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
 
@@ -140,9 +139,11 @@ switch (newArrObjects[0].offer.type) {
   case `house`: cardPromyseType.textContent = `Дом`;
 }
 /* КОЛИЧЕСТВО КОМНАТ ДЛЯ __ ГОСТЕЙ */
-/* cardOffer = `${newArrObjects[0].offer.rooms}` + `комнаты для ` + `${newArrObjects[0].offer.guests}` + `гостей`; */
+cardOffer.textContent = `${newArrObjects[0].offer.rooms}` + `комнаты для ` + `${newArrObjects[0].offer.guests}` + `гостей`;
+
 /* ВРЕМЯ ЗАЕЗДА & ВЫЕЗДА */
-/* cardTimesInOut = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`; */
+cardTimesInOut.textContent = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`;
+
 /* ФОТКИ ОБЪЕКТА */
 cardPhoto.remove();
 for (let i = 0; i < newArrObjects[0].offer.photos.length; i++) {
@@ -171,9 +172,6 @@ for (let i = 0; i < inputFields.length; i++) {
 }
 const mapFilter = document.querySelector(`.map__filters`);
 mapFilter.classList.add(`ad-form--disabled`); // добавление блокировки
-
-/* ФОТО*/
-cardPhoto.remove();
 
 /*   ПЕРЕМЕЩЕНИЕ МЕТКИ */
 let logoPin = document.querySelector(`.map__pin--main`);
