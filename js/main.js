@@ -139,10 +139,10 @@ switch (newArrObjects[0].offer.type) {
   case `house`: cardPromyseType.textContent = `Дом`;
 }
 /* КОЛИЧЕСТВО КОМНАТ ДЛЯ __ ГОСТЕЙ */
-cardOffer.textContent = `${newArrObjects[0].offer.rooms}` + `комнаты для ` + `${newArrObjects[0].offer.guests}` + `гостей`;
+cardOffer.textContent = `${newArrObjects[0].offer.rooms}` + ` для ` + `${newArrObjects[0].offer.guests.toLowerCase()}`;
 
 /* ВРЕМЯ ЗАЕЗДА & ВЫЕЗДА */
-cardTimesInOut.textContent = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`;
+cardTimesInOut.textContent = `Заезд` + `${newArrObjects[0].offer.checkin.toLowerCase()}` + `, ` + `${newArrObjects[0].offer.checkout.toLowerCase()}`;
 
 /* ФОТКИ ОБЪЕКТА */
 cardPhoto.remove();
