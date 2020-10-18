@@ -219,9 +219,6 @@ addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (
 popup.hidden = true;
 
 const removingTheLock = (evt) => {
-  if (evt.button !== 0) {
-    return;
-  }
   if ((evt.button === 0) || (evt.key === `Enter`)) {
     mapBooking.classList.remove(`map--faded`);
     mapFilter.classList.remove(`ad-form--disabled`);
@@ -234,6 +231,9 @@ const removingTheLock = (evt) => {
   logoPin.addEventListener(`mousemove`, function () {
     addressForm.value = (logoPin.getBoundingClientRect().x) + `,` + (logoPin.getBoundingClientRect().y);
   });
+  if ((evt.button !== 0) || (evt.key !== `Enter`)) {
+    return;
+  }
   logoPin.removeEventListener(evt, removingTheLock);
 };
 
@@ -266,19 +266,4 @@ inputRoom.addEventListener(`change`, function (e) {
   }
 });
 
-/* ЗАКРЫТИЕ POPUP */
-const closePopup = popup.querySelector(`.popup__close`);
-
-closePopup.addEventListener(`click`, function () {
-  popup.hidden = true;
-});
-
-document.addEventListener(`keydown`, function (evt) {
-  if (evt.key === `Escape`) {
-    popup.hidden = true;
-  }
-  if (evt.key === `Enter`) {
-    popup.hidden = false;
-  }
-});
 
