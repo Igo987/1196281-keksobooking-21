@@ -328,7 +328,7 @@ const allButtonsInPins = mapPins.querySelectorAll(`button`);
 
 for (let buttonPin of allButtonsInPins) {
   buttonPin.addEventListener(`click`, function () {
-    let Index = newArrObjects.map((item) => item.author.avatar).indexOf(this.firstChild.src.split(``).slice(-22).join(``));
+    let Index = newArrObjects.map((item) => item.author.avatar).indexOf(buttonPin.firstChild.src.split(``).slice(-22).join(``));
     cardAvatar.src = newArrObjects[Index].author.avatar;
     cardTitle.textContent = newArrObjects[Index].offer.title;
     cardAddress.textContent = newArrObjects[Index].offer.address;
