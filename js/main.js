@@ -139,10 +139,10 @@ switch (newArrObjects[0].offer.type) {
   case `house`: cardPromyseType.textContent = `Дом`;
 }
 /* КОЛИЧЕСТВО КОМНАТ ДЛЯ __ ГОСТЕЙ */
-cardOffer.textContent = `${newArrObjects[0].offer.rooms}` + ` для ` + `${newArrObjects[0].offer.guests.toLowerCase()}`;
+cardOffer = `${newArrObjects[0].offer.rooms}` + `комнаты для ` + `${newArrObjects[0].offer.guests}` + `гостей`;
 
 /* ВРЕМЯ ЗАЕЗДА & ВЫЕЗДА */
-cardTimesInOut.textContent = `Заезд` + `${newArrObjects[0].offer.checkin.toLowerCase()}` + `, ` + `${newArrObjects[0].offer.checkout.toLowerCase()}`;
+cardTimesInOut = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`;
 
 /* ФОТКИ ОБЪЕКТА */
 cardPhoto.remove();
@@ -170,8 +170,7 @@ const inputFields = form.querySelectorAll(`fieldset`);
 for (let i = 0; i < inputFields.length; i++) {
   inputFields[i].setAttribute(`disabled`, true);
 }
-const mapFilter = document.querySelector(`.map__filters`);
-mapFilter.classList.add(`ad-form--disabled`); // добавление блокировки
+
 
 /*   ПЕРЕМЕЩЕНИЕ МЕТКИ */
 let logoPin = document.querySelector(`.map__pin--main`);
@@ -218,27 +217,42 @@ const MAP_PIN_SIZE = 31; // половина ширины и высоты main p
 addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
 popup.hidden = true;
 
-const removingTheLock = (evt) => {
-  if ((evt.button === 0) || (evt.key === `Enter`)) {
-    mapBooking.classList.remove(`map--faded`);
-    mapFilter.classList.remove(`ad-form--disabled`);
-    popup.hidden = false;
-    form.classList.remove(`ad-form--disabled`);
-    for (let i = 0; i < inputFields.length; i++) {
-      fieldset[i].removeAttribute(`disabled`);
-    }
+const activateMap = () => {
+  mapBooking.classList.remove(`map--faded`);
+  popup.hidden = false;
+  form.classList.remove(`ad-form--disabled`);
+  for (let i = 0; i < inputFields.length; i++) {
+    fieldset[i].removeAttribute(`disabled`);
   }
-  logoPin.addEventListener(`mousemove`, function () {
-    addressForm.value = (logoPin.getBoundingClientRect().x) + `,` + (logoPin.getBoundingClientRect().y);
-  });
-  if ((evt.button !== 0) || (evt.key !== `Enter`)) {
-    return;
-  }
-  logoPin.removeEventListener(evt, removingTheLock);
+  logoPin.removeEventListener(`keydown`, onLogoPinKeyDown);
+  logoPin.removeEventListener(`mousedown`, onLogoPinMouseDown);
 };
 
-logoPin.addEventListener(`mousedown`, removingTheLock);
-logoPin.addEventListener(`keydown`, removingTheLock);
+logoPin.addEventListener(`mousemove`, function () {
+  addressForm.value = (logoPin.getBoundingClientRect().x) + `,` + (logoPin.getBoundingClientRect().y);
+});
+
+const onLogoPinMouseDown = (evt) => {
+  if (evt.button !== 0) {
+    return;
+  }
+  if (evt.button === 0) {
+    activateMap();
+  }
+};
+
+const onLogoPinKeyDown = (evt) => {
+  if (evt.key !== `Enter`) {
+    return;
+  }
+  if (evt.key === `Enter`) {
+    activateMap();
+  }
+};
+
+logoPin.addEventListener(`mousedown`, onLogoPinMouseDown);
+logoPin.addEventListener(`keydown`, onLogoPinKeyDown);
+
 
 /* ФИЧИ */
 let valueFeatures = newArrObjects[0].offer.features;
