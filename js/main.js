@@ -115,7 +115,8 @@ let cardAddress = newCard.querySelector(`.popup__text--address`); // адрес
 let cardPrice = newCard.querySelector(`.popup__text--price`); // цена {{offer.price}}₽/ночь
 let cardPromyseType = newCard.querySelector(`.popup__type`); // тип жилья прописать соответствие
 let cardOffer = newCard.querySelector(`.popup__text--capacity`); // вместимость {{offer.rooms}} комнаты для {{offer.guests}} гостей
-let cardFeatures = newCard.querySelectorAll(`.popup__feature`); // фичи
+// let cardFeatures = newCard.querySelectorAll(`.popup__feature`);
+let listFeatures = newCard.querySelector(`.popup__features`); // фичи
 let cardTimesInOut = newCard.querySelector(`.popup__text--time`); // время заезда-выезда Заезд после {{offer.checkin}}, выезд до {{offer.checkout}}
 let cardDescription = newCard.querySelector(`.popup__description`); // описание
 let cardPhotos = newCard.querySelector(`.popup__photos`); // блок фото
@@ -141,10 +142,10 @@ switch (newArrObjects[0].offer.type) {
 }
 
 /* КОЛИЧЕСТВО КОМНАТ ДЛЯ __ ГОСТЕЙ */
-cardOffer.textContent = `${newArrObjects[0].offer.rooms}` + ` для  ` + `${newArrObjects[0].offer.guests.toLowerCase()}`;
+cardOffer.value = `${newArrObjects[0].offer.rooms}` + `комнаты для ` + `${newArrObjects[0].offer.guests}` + `гостей`;
 
 /* ВРЕМЯ ЗАЕЗДА & ВЫЕЗДА */
-cardTimesInOut.textContent = `Заезд ` + `${newArrObjects[0].offer.checkin.toLowerCase()}` + ` , ` + `${newArrObjects[0].offer.checkout.toLowerCase()}`;
+cardTimesInOut.value = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`;
 
 /* ФОТКИ ОБЪЕКТА */
 cardPhoto.remove();
@@ -243,7 +244,7 @@ logoPin.addEventListener(`mousedown`, removingTheLock);
 logoPin.addEventListener(`keydown`, removingTheLock);
 
 /* ФИЧИ */
-let valueFeatures = newArrObjects[0].offer.features;
+/* let valueFeatures = newArrObjects[0].offer.features;
 const arrFeatures = Array.from(cardFeatures);
 for (let i = 0; i < valueFeatures.length; i++) {
   let getFeatureClass = `popup__feature--` + valueFeatures[i];
@@ -251,7 +252,7 @@ for (let i = 0; i < valueFeatures.length; i++) {
   if (!classAvailable) {
     arrFeatures[i].remove();
   }
-}
+} */
 
 /* ВАЛИДАЦИЯ ГРАФ "КОЛИЧЕСТВО КОМНАТ" И "КОЛИЧЕСТВО ГОСТЕЙ" */
 const inputRoom = document.querySelector(`#room_number`); // КОМНАТА
@@ -333,8 +334,8 @@ for (let buttonPin of allButtonsInPins) {
     cardTitle.textContent = newArrObjects[Index].offer.title;
     cardAddress.textContent = newArrObjects[Index].offer.address;
     cardPrice.textContent = `Цена ` + newArrObjects[Index].offer.price + ` ₽/ночь`;
-    cardOffer.textContent = `${newArrObjects[Index].offer.rooms.toLowerCase()}` + ` для ` + `${newArrObjects[Index].offer.guests.toLowerCase()}`;
-    cardTimesInOut.textContent = `Заезд ` + `${newArrObjects[Index].offer.checkin.toLowerCase()}` + `, ` + `${newArrObjects[Index].offer.checkout.toLowerCase()}`;
+    cardOffer.value = `${newArrObjects[Index].offer.rooms}` + `комнаты для ` + `${newArrObjects[Index].offer.guests}` + `гостей`;
+    cardTimesInOut.value = `Заезд после` + `${newArrObjects[Index].offer.checkin}` + `,выезд до` + `${newArrObjects[Index].offer.checkout}`;
     cardDescription.textContent = newArrObjects[Index].offer.description;
     switch (newArrObjects[Index].offer.type) {
       case `palace`: cardPromyseType.textContent = `Дворец`;
@@ -345,32 +346,23 @@ for (let buttonPin of allButtonsInPins) {
         break;
       case `house`: cardPromyseType.textContent = `Дом`;
     }
-  }
-  );
+
+    while (cardPhotos.firstChild) {
+      cardPhotos.removeChild(cardPhotos.lastChild);
+    }
+    for (let i = 0; i < newArrObjects[Index].offer.photos.length; i++) {
+      let clonePhoto = cardPhoto.cloneNode(false);
+      cardPhotos.append(clonePhoto);
+      clonePhoto.src = newArrObjects[Index].offer.photos[i];
+    }
+
+    let valueFeatures = newArrObjects[Index].offer.features;
+    listFeatures.innerHTML = ``;
+    for (let j = 0; j < valueFeatures.length; j++) {
+      const featuresButton = document.createElement(`li`);
+      featuresButton.classList.add(`popup__feature`, `popup__feature--` + valueFeatures[j]);
+      listFeatures.append(featuresButton);
+    }
+  });
 }
 
-//     let valueFeatures = newArrObjects[Index].offer.features;
-//     const arrFeatures = Array.from(cardFeatures);
-//     for (let i = 0; i < valueFeatures.length; i++) {
-//       let getFeatureClass = `popup__feature--` + valueFeatures[i];
-//       let classAvailable = arrFeatures.forEach((el) => el.classList.contains(getFeatureClass));
-//       if (!classAvailable) {
-//         arrFeatures[i].remove();
-//       }
-//     }
-//   });
-// }
-
-//     /* ФОТКИ ОБЪЕКТА */
-//     cardPhoto.remove();
-//     for (let i = 0; i < newArrObjects[Index].offer.photos.length; i++) {
-//       let clonePhoto = cardPhoto.cloneNode(false);
-//       cardPhotos.append(clonePhoto);
-//       clonePhoto.src = newArrObjects[Index].offer.photos[i];
-//     }
-
-//     /* ФИЧИ */
-//   cardFeatures = newArrObjects[Index].offer.features;
-//   }
-//    );
-// }
