@@ -107,6 +107,7 @@ let renderCard = (object) => {
 };
 
 /* ОТРИСОВКА ОБЪЯВЛЕНИЯ */
+
 newArrObjects.forEach(function (item) {
   const pin = document.querySelector(`#pin`).content;
   const newPin = pin.cloneNode(true);
@@ -138,13 +139,12 @@ let cardPhotos = newCard.querySelector(`.popup__photos`); // блок фото
 let cardPhoto = newCard.querySelector(`.popup__photo`); // фотографии
 let cardAvatar = newCard.querySelector(`.popup__avatar`); // аватар
 
+/* ОПИСАНИЕ */
 cardTitle.textContent = newArrObjects[0].offer.title;
 /* АДРЕС*/
 cardAddress.textContent = newArrObjects[0].offer.address;
-
 /* ЦЕНА */
 cardPrice.textContent = `Цена ` + newArrObjects[0].offer.price + `₽/ночь`;
-
 /* ТИП ПОМЕЩЕНИЯ */
 switch (newArrObjects[0].offer.type) {
   case `palace`: cardPromyseType.textContent = `Дворец`;
@@ -155,13 +155,12 @@ switch (newArrObjects[0].offer.type) {
     break;
   case `house`: cardPromyseType.textContent = `Дом`;
 }
-
 /* КОЛИЧЕСТВО КОМНАТ ДЛЯ __ ГОСТЕЙ */
-cardOffer.textContent = `${newArrObjects[0].offer.rooms}` + ` комнаты для  ` + `${newArrObjects[0].offer.guests}` + ` гостей`;
+
+cardOffer.value = `${newArrObjects[0].offer.rooms}` + `комнаты для ` + `${newArrObjects[0].offer.guests}` + `гостей`;
 
 /* ВРЕМЯ ЗАЕЗДА & ВЫЕЗДА */
-cardTimesInOut.textContent = `Заезд после ` + `${newArrObjects[0].offer.checkin}` + `,выезд до ` + `${newArrObjects[0].offer.checkout}`;
-
+cardTimesInOut.value = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`;
 /* ФОТКИ ОБЪЕКТА */
 cardPhoto.remove();
 for (let i = 0; i < newArrObjects[0].offer.photos.length; i++) {
@@ -185,7 +184,6 @@ const fieldset = form.querySelectorAll(`fieldset`);
 
 /* НЕАКТИВНЫЕ ЭЛЕМЕНТЫ ФОРМЫ  (ДОЛЖНЫ БЫТЬ) */
 const inputFields = form.querySelectorAll(`fieldset`);
-
 for (let i = 0; i < inputFields.length; i++) {
   inputFields[i].setAttribute(`disabled`, true);
 }
@@ -241,6 +239,46 @@ const activateMap = () => {
   form.classList.remove(`ad-form--disabled`);
   for (let i = 0; i < inputFields.length; i++) {
     fieldset[i].removeAttribute(`disabled`);
+
+  }
+  logoPin.removeEventListener(`keydown`, onLogoPinKeyDown);
+  logoPin.removeEventListener(`mousedown`, onLogoPinMouseDown);
+};
+
+logoPin.addEventListener(`mousemove`, function () {
+  addressForm.value = (logoPin.getBoundingClientRect().x) + `,` + (logoPin.getBoundingClientRect().y);
+});
+
+const onLogoPinMouseDown = (evt) => {
+  if (evt.button !== 0) {
+    return;
+  }
+  if (evt.button === 0) {
+    activateMap();
+  }
+};
+
+const onLogoPinKeyDown = (evt) => {
+  if (evt.key !== `Enter`) {
+    return;
+  }
+  if (evt.key === `Enter`) {
+    activateMap();
+  }
+};
+
+logoPin.addEventListener(`mousedown`, onLogoPinMouseDown);
+logoPin.addEventListener(`keydown`, onLogoPinKeyDown);
+
+
+/* ФИЧИ */
+let valueFeatures = newArrObjects[0].offer.features;
+const arrFeatures = Array.from(cardFeatures);
+for (let i = 0; i < valueFeatures.length; i++) {
+  let getFeatureClass = `popup__feature--` + valueFeatures[i];
+  let classAvailable = arrFeatures.forEach((el) => el.classList.contains(getFeatureClass));
+  if (!classAvailable) {
+    arrFeatures[i].remove();
   }
   logoPin.removeEventListener(`keydown`, onLogoPinKeyDown);
   logoPin.removeEventListener(`mousedown`, onLogoPinMouseDown);
@@ -353,5 +391,4 @@ document.addEventListener(`keydown`, function (evt) {
   }
   document.removeEventListener(`keydown`);
 });
-
 
