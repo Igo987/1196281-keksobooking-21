@@ -1,40 +1,17 @@
 'use strict';
+
 /* Удаление класса неактивного состояния у карты */
 let mapBooking = document.querySelector(`.map`);
 
-/* Функция получения случайного целого числа в диапозоне */
-function getRandomIntInclusive(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-/* Функция получения случайного элемента */
-function getRandomElement(arr) {
-  return arr[getRandomIntInclusive(0, arr.length - 1)];
-}
-
-/* Функция получения определенного количества случайных элементов массива */
-function getRandomElements(arr) {
-  let arrCopy = [...arr];
-  let result = [];
-  let randomElementCount = getRandomIntInclusive(1, arr.length);
-  for (let i = 0; i < randomElementCount; i++) {
-    let randomIndex = getRandomIntInclusive(0, arrCopy.length - 1);
-    let elementToAdd = arrCopy.splice(randomIndex, 1);
-    result.push(elementToAdd);
-  }
-  return result;
-}
-
 /* количество комнат */
-const roomOptionElementsValue = Array.from(document.querySelectorAll(`#housing-rooms`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
+const roomOptionElementsValue = Array.from(document.querySelector(`#housing-rooms`).children).map((el) => el.value);
 
 /* время заселения */
-const timesIn = Array.from(document.querySelectorAll(`#timein`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
+const timesIn = Array.from(document.querySelector(`#timein`).children).map((el) => el.value);
+
 
 /*  время выселения */
-const timesOut = Array.from(document.querySelectorAll(`#timeout`)).map((el) => el.textContent).toString().replace(/ +/g, ` `).trim().split(`\n`);
+const timesOut = Array.from(document.querySelector(`#timeout`).children).map((el) => el.value);
 
 /* Фичи */
 const FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
@@ -46,7 +23,7 @@ const PHOTOS = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0
 const PREMISES_TYPES = [`palace`, `flat`, `house`, `bungalow`];
 
 /* Число гостей */
-const GUESTS = [`Любое число гостей`, `Два гостя`, `Один гость`, `Не для гостей`];
+const GUESTS = Array.from(document.querySelector(`#housing-guests`).children).map((el) => el.value);
 
 /* текст ( свойство: описание объекта) */
 const TEXT = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua`;
@@ -60,8 +37,8 @@ const PIN_HALF_WIDTH = 32;
 const getSomeObjects = () => {
   let newAdd = [];
   for (let i = 1; i <= 8; i++) {
-    const valueLocationX = getRandomIntInclusive(0, 1200);
-    const valueLocationY = getRandomIntInclusive(130, 630);
+    const valueLocationX = window.util.getRandomIntInclusive(0, 1200);
+    const valueLocationY = window.util.getRandomIntInclusive(130, 630);
     const address = `${valueLocationX}, ${valueLocationY}`;
     let newObject = {
       'author': {
@@ -70,15 +47,15 @@ const getSomeObjects = () => {
       'offer': {
         'title': TEXT,
         'address': address,
-        'price': getRandomIntInclusive(0, 60000),
-        'type': getRandomElement(PREMISES_TYPES),
-        'rooms': getRandomElement(roomOptionElementsValue),
-        'guests': getRandomElement(GUESTS),
-        'checkin': getRandomElement(timesIn),
-        'checkout': getRandomElement(timesOut),
-        'features': getRandomElements(FEATURES),
+        'price': window.util.getRandomIntInclusive(0, 60000),
+        'type': window.util.getRandomElement(PREMISES_TYPES),
+        'rooms': window.util.getRandomElement(roomOptionElementsValue),
+        'guests': window.util.getRandomElement(GUESTS),
+        'checkin': window.util.getRandomElement(timesIn),
+        'checkout': window.util.getRandomElement(timesOut),
+        'features': window.util.getRandomElements(FEATURES),
         'description': TEXT,
-        'photos': getRandomElements(PHOTOS),
+        'photos': window.util.getRandomElements(PHOTOS),
       },
       'location': {
         'x': valueLocationX,
@@ -91,6 +68,45 @@ const getSomeObjects = () => {
 };
 
 const newArrObjects = getSomeObjects();
+
+/* ГЕНЕРАЦИЯ ОБЪЕКТА */
+let renderCard = (object) => {
+  cardAvatar.src = object.author.avatar;
+  cardTitle.textContent = object.offer.title;
+  cardAvatar.src = object.author.avatar;
+  cardTitle.textContent = object.offer.title;
+  cardAddress.textContent = object.offer.address;
+  cardPrice.textContent = `Цена ` + object.offer.price + ` ₽/ночь`;
+  cardOffer.textContent = `${object.offer.rooms}` + `комнаты для ` + `${object.offer.guests}` + `гостей`;
+  cardTimesInOut.textContent = `Заезд после` + `${object.offer.checkin}` + `,выезд до` + `${object.offer.checkout}`;
+  cardDescription.textContent = object.offer.description;
+  switch (object.offer.type) {
+    case `palace`: cardPromyseType.textContent = `Дворец`;
+      break;
+    case `bungalow`: cardPromyseType.textContent = `Бунгало`;
+      break;
+    case `flat`: cardPromyseType.textContent = `Квартира`;
+      break;
+    case `house`: cardPromyseType.textContent = `Дом`;
+  }
+  while (cardPhotos.firstChild) {
+    cardPhotos.removeChild(cardPhotos.lastChild);
+  }
+  for (let i = 0; i < object.offer.photos.length; i++) {
+    let clonePhoto = cardPhoto.cloneNode(false);
+    cardPhotos.append(clonePhoto);
+    clonePhoto.src = object.offer.photos[i];
+  }
+  let valueFeatures = object.offer.features;
+  features.innerHTML = ``;
+  for (let j = 0; j < valueFeatures.length; j++) {
+    const featuresButton = document.createElement(`li`);
+    featuresButton.classList.add(`popup__feature`, `popup__feature--` + valueFeatures[j]);
+    features.append(featuresButton);
+  }
+};
+
+/* ОТРИСОВКА ОБЪЯВЛЕНИЯ */
 newArrObjects.forEach(function (item) {
   const pin = document.querySelector(`#pin`).content;
   const newPin = pin.cloneNode(true);
@@ -101,22 +117,21 @@ newArrObjects.forEach(function (item) {
   mapPin.style.top = item.location.y + PIN_HEIGHT + `px`;
   image.alt = item.offer.title;
   mapPins.append(mapPin);
+  mapPin.addEventListener(`click`, () => renderCard(item));
 });
+
 
 /* Новая часть */
 /* блок объявлений */
 const filterContainers = document.querySelector(`.map__filters-container`);
-
-const card = document.querySelector(`#card`); // шаблон объявления
-const newCard = card.content.cloneNode(true); // клонирование шаблона
-
+const card = document.querySelector(`#card`).content; // шаблон объявления
+const newCard = card.cloneNode(true); // клонирование шаблона
 let cardTitle = newCard.querySelector(`.popup__title`); // заголовок
 let cardAddress = newCard.querySelector(`.popup__text--address`); // адрес
 let cardPrice = newCard.querySelector(`.popup__text--price`); // цена {{offer.price}}₽/ночь
 let cardPromyseType = newCard.querySelector(`.popup__type`); // тип жилья прописать соответствие
 let cardOffer = newCard.querySelector(`.popup__text--capacity`); // вместимость {{offer.rooms}} комнаты для {{offer.guests}} гостей
-// let cardFeatures = newCard.querySelectorAll(`.popup__feature`);
-let listFeatures = newCard.querySelector(`.popup__features`); // фичи
+let features = newCard.querySelector(`.popup__features`); // фичи
 let cardTimesInOut = newCard.querySelector(`.popup__text--time`); // время заезда-выезда Заезд после {{offer.checkin}}, выезд до {{offer.checkout}}
 let cardDescription = newCard.querySelector(`.popup__description`); // описание
 let cardPhotos = newCard.querySelector(`.popup__photos`); // блок фото
@@ -142,10 +157,10 @@ switch (newArrObjects[0].offer.type) {
 }
 
 /* КОЛИЧЕСТВО КОМНАТ ДЛЯ __ ГОСТЕЙ */
-cardOffer.value = `${newArrObjects[0].offer.rooms}` + `комнаты для ` + `${newArrObjects[0].offer.guests}` + `гостей`;
+cardOffer.textContent = `${newArrObjects[0].offer.rooms}` + ` комнаты для  ` + `${newArrObjects[0].offer.guests}` + ` гостей`;
 
 /* ВРЕМЯ ЗАЕЗДА & ВЫЕЗДА */
-cardTimesInOut.value = `Заезд после` + `${newArrObjects[0].offer.checkin}` + `,выезд до` + `${newArrObjects[0].offer.checkout}`;
+cardTimesInOut.textContent = `Заезд после ` + `${newArrObjects[0].offer.checkin}` + `,выезд до ` + `${newArrObjects[0].offer.checkout}`;
 
 /* ФОТКИ ОБЪЕКТА */
 cardPhoto.remove();
@@ -218,30 +233,39 @@ const popup = document.querySelector(`.map__card`);
 let addressForm = form.querySelector(`#address`);
 const MAP_PIN_SIZE = 31; // половина ширины и высоты main pin (получаем её центр);
 addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
-
 popup.hidden = true;
 
-const removingTheLock = (evt) => {
-  if ((evt.button === 0) || (evt.key === `Enter`)) {
-    mapBooking.classList.remove(`map--faded`);
-    popup.hidden = false;
-    form.classList.remove(`ad-form--disabled`);
-    for (let i = 0; i < inputFields.length; i++) {
-      fieldset[i].removeAttribute(`disabled`);
-    }
-
-    logoPin.addEventListener(`mousemove`, function () {
-      addressForm.value = (logoPin.getBoundingClientRect().x) + `,` + (logoPin.getBoundingClientRect().y);
-    });
-    logoPin.removeEventListener(evt, removingTheLock);
-    if ((evt.button !== 0) || (evt.key !== `Enter`)) {
-      return;
-    }
+const activateMap = () => {
+  mapBooking.classList.remove(`map--faded`);
+  popup.hidden = false;
+  form.classList.remove(`ad-form--disabled`);
+  for (let i = 0; i < inputFields.length; i++) {
+    fieldset[i].removeAttribute(`disabled`);
   }
+  logoPin.removeEventListener(`keydown`, onLogoPinKeyDown);
+  logoPin.removeEventListener(`mousedown`, onLogoPinMouseDown);
 };
 
-logoPin.addEventListener(`mousedown`, removingTheLock);
-logoPin.addEventListener(`keydown`, removingTheLock);
+logoPin.addEventListener(`mousemove`, function () {
+  addressForm.value = (logoPin.getBoundingClientRect().x) + `,` + (logoPin.getBoundingClientRect().y);
+});
+
+const onLogoPinMouseDown = (evt) => {
+  if (evt.button !== 0) {
+    return;
+  }
+  activateMap();
+};
+
+const onLogoPinKeyDown = (evt) => {
+  if (evt.key !== `Enter`) {
+    return;
+  }
+  activateMap();
+};
+
+logoPin.addEventListener(`mousedown`, onLogoPinMouseDown);
+logoPin.addEventListener(`keydown`, onLogoPinKeyDown);
 
 /* ВАЛИДАЦИЯ ГРАФ "КОЛИЧЕСТВО КОМНАТ" И "КОЛИЧЕСТВО ГОСТЕЙ" */
 const inputRoom = document.querySelector(`#room_number`); // КОМНАТА
@@ -265,34 +289,51 @@ const formTimeOutValues = Array.from(formTimeOut);
 
 formTimeIn.addEventListener(`change`, function (e) {
   for (let i = 0; i < formTimeOut.length; i++) {
-    formTimeOutValues[i].disabled = true;
     if (formTimeOutValues[i].value === e.currentTarget.value) {
-      formTimeOutValues[i].disabled = false;
       formTimeOutValues[i].setAttribute(`selected`, true);
     }
   }
 });
 
 /* ВАЛИДАЦИЯ "Тип жилья" и "Цена за ночь" */
-const formPromyseTypeSelect = form.querySelector(`#type`);
-const formPriceOfPromyseTypeSelect = form.querySelector(`#price`);
+const formHousingTypeSelect = form.querySelector(`#type`);
+const formPriceOfHousingTypeSelect = form.querySelector(`#price`);
 
-formPromyseTypeSelect.addEventListener(`change`, function (e) {
-  if (e.currentTarget.value === `flat`) {
-    formPriceOfPromyseTypeSelect.placeholder = `1000`;
-    formPriceOfPromyseTypeSelect.setAttribute(`min`, 1000);
-  }
-  if (e.currentTarget.value === `house`) {
-    formPriceOfPromyseTypeSelect.placeholder = `5000`;
-    formPriceOfPromyseTypeSelect.setAttribute(`min`, 5000);
-  }
-  if (e.currentTarget.value === `palace`) {
-    formPriceOfPromyseTypeSelect.placeholder = `10000`;
-    formPriceOfPromyseTypeSelect.setAttribute(`min`, 10000);
-  }
-  if (e.currentTarget.value === `bungalow`) {
-    formPriceOfPromyseTypeSelect.placeholder = `0`;
-    formPriceOfPromyseTypeSelect.setAttribute(`min`, 0);
+const HOUSING_TYPE = {
+  flat: `flat`,
+  house: `house`,
+  palace: `palace`,
+  bungalow: `bungalow`,
+};
+
+const PRICE = {
+  flat: `1000`,
+  house: `5000`,
+  palace: `10000`,
+  bungalow: `0`,
+};
+
+formHousingTypeSelect.addEventListener(`change`, function (e) {
+  switch (e.currentTarget.value) {
+    case HOUSING_TYPE.palace:
+      formPriceOfHousingTypeSelect.placeholder = PRICE.palace;
+      formPriceOfHousingTypeSelect.setAttribute(`min`, PRICE.palace);
+      break;
+
+    case HOUSING_TYPE.bungalow:
+      formPriceOfHousingTypeSelect.placeholder = PRICE.bungalow;
+      formPriceOfHousingTypeSelect.setAttribute(`min`, PRICE.bungalow);
+      break;
+
+    case HOUSING_TYPE.flat:
+      formPriceOfHousingTypeSelect.placeholder = PRICE.flat;
+      formPriceOfHousingTypeSelect.setAttribute(`min`, PRICE.flat);
+      break;
+
+    case HOUSING_TYPE.house:
+      formPriceOfHousingTypeSelect.placeholder = PRICE.house;
+      formPriceOfHousingTypeSelect.setAttribute(`min`, PRICE.house);
+      break;
   }
 });
 
@@ -310,48 +351,7 @@ document.addEventListener(`keydown`, function (evt) {
   if (evt.key === `Enter`) {
     popup.hidden = false;
   }
-  document.removeEventListener(`click`);
+  document.removeEventListener(`keydown`);
 });
 
-/*  ВЫВОД В POPUP ВЫБРАННОГО ОБЪЯВЛЕНИЯ */
-const allButtonsInPins = mapPins.querySelectorAll(`button`);
-
-for (let buttonPin of allButtonsInPins) {
-  buttonPin.addEventListener(`click`, function () {
-    let Index = newArrObjects.map((item) => item.author.avatar).indexOf(buttonPin.firstChild.src.split(``).slice(-22).join(``));
-    cardAvatar.src = newArrObjects[Index].author.avatar;
-    cardTitle.textContent = newArrObjects[Index].offer.title;
-    cardAddress.textContent = newArrObjects[Index].offer.address;
-    cardPrice.textContent = `Цена ` + newArrObjects[Index].offer.price + ` ₽/ночь`;
-    cardOffer.value = `${newArrObjects[Index].offer.rooms}` + `комнаты для ` + `${newArrObjects[Index].offer.guests}` + `гостей`;
-    cardTimesInOut.value = `Заезд после` + `${newArrObjects[Index].offer.checkin}` + `,выезд до` + `${newArrObjects[Index].offer.checkout}`;
-    cardDescription.textContent = newArrObjects[Index].offer.description;
-    switch (newArrObjects[Index].offer.type) {
-      case `palace`: cardPromyseType.textContent = `Дворец`;
-        break;
-      case `bungalow`: cardPromyseType.textContent = `Бунгало`;
-        break;
-      case `flat`: cardPromyseType.textContent = `Квартира`;
-        break;
-      case `house`: cardPromyseType.textContent = `Дом`;
-    }
-
-    while (cardPhotos.firstChild) {
-      cardPhotos.removeChild(cardPhotos.lastChild);
-    }
-    for (let i = 0; i < newArrObjects[Index].offer.photos.length; i++) {
-      let clonePhoto = cardPhoto.cloneNode(false);
-      cardPhotos.append(clonePhoto);
-      clonePhoto.src = newArrObjects[Index].offer.photos[i];
-    }
-
-    let valueFeatures = newArrObjects[Index].offer.features;
-    listFeatures.innerHTML = ``;
-    for (let j = 0; j < valueFeatures.length; j++) {
-      const featuresButton = document.createElement(`li`);
-      featuresButton.classList.add(`popup__feature`, `popup__feature--` + valueFeatures[j]);
-      listFeatures.append(featuresButton);
-    }
-  });
-}
 
