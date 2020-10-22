@@ -243,17 +243,6 @@ const removingTheLock = (evt) => {
 logoPin.addEventListener(`mousedown`, removingTheLock);
 logoPin.addEventListener(`keydown`, removingTheLock);
 
-/* ФИЧИ */
-/* let valueFeatures = newArrObjects[0].offer.features;
-const arrFeatures = Array.from(cardFeatures);
-for (let i = 0; i < valueFeatures.length; i++) {
-  let getFeatureClass = `popup__feature--` + valueFeatures[i];
-  let classAvailable = arrFeatures.forEach((el) => el.classList.contains(getFeatureClass));
-  if (!classAvailable) {
-    arrFeatures[i].remove();
-  }
-} */
-
 /* ВАЛИДАЦИЯ ГРАФ "КОЛИЧЕСТВО КОМНАТ" И "КОЛИЧЕСТВО ГОСТЕЙ" */
 const inputRoom = document.querySelector(`#room_number`); // КОМНАТА
 const inputCapacity = document.querySelector(`#capacity`); // ГОСТЬ
