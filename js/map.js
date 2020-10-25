@@ -7,7 +7,7 @@
   const PIN_HALF_WIDTH = 32;
 
   /* ОТРИСОВКА ОБЪЯВЛЕНИЯ */ // В МОДУЛЬ MAP
-  window.data.newArrObjects.forEach(function (item) {
+  window.data.objects.forEach(function (item) {
     const pin = document.querySelector(`#pin`).content;
     const newPin = pin.cloneNode(true);
     const image = newPin.querySelector(`img`);
@@ -17,11 +17,59 @@
     mapPin.style.top = item.location.y + PIN_HEIGHT + `px`;
     image.alt = item.offer.title;
     mapPins.append(mapPin);
-    mapPin.addEventListener(`click`, () => window.card.renderCard(item));
+    mapPin.addEventListener(`click`, () => window.card.render(item));
   });
 
-  /* ПЕРЕМЕЩЕНИЕ МЕТКИ */ // В MAP
+
+  /* НЕАКТИВНЫЕ ЭЛЕМЕНТЫ ФОРМЫ  (ДОЛЖНЫ БЫТЬ) */
+  const inputFields = window.form.form.querySelectorAll(`fieldset`);
+  for (let i = 0; i < inputFields.length; i++) {
+    inputFields[i].setAttribute(`disabled`, true);
+  }
+
+  /* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */
   let logoPin = document.querySelector(`.map__pin--main`);
+  let mapBooking = document.querySelector(`.map`);
+  const popup = document.querySelector(`.map__card`);
+  let addressForm = window.form.form.querySelector(`#address`);
+  const MAP_PIN_SIZE = 31; // половина ширины и высоты main pin (получаем её центр);
+  addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
+  popup.hidden = true;
+
+  const activateMap = () => {
+    mapBooking.classList.remove(`map--faded`);
+    popup.hidden = false;
+    window.form.form.classList.remove(`ad-form--disabled`);
+    for (let i = 0; i < inputFields.length; i++) {
+      inputFields[i].removeAttribute(`disabled`);
+    }
+    logoPin.removeEventListener(`keydown`, onLogoPinKeyDown);
+    logoPin.removeEventListener(`mousedown`, onLogoPinMouseDown);
+  };
+
+  logoPin.addEventListener(`mousemove`, function () {
+    addressForm.value = (logoPin.getBoundingClientRect().x) + `,` + (logoPin.getBoundingClientRect().y);
+  });
+
+  const onLogoPinMouseDown = (evt) => {
+    if (evt.button !== 0) {
+      return;
+    }
+    activateMap();
+  };
+
+  const onLogoPinKeyDown = (evt) => {
+    if (evt.key !== `Enter`) {
+      return;
+    }
+    activateMap();
+  };
+
+  logoPin.addEventListener(`mousedown`, onLogoPinMouseDown);
+  logoPin.addEventListener(`keydown`, onLogoPinKeyDown);
+
+  /* ПЕРЕМЕЩЕНИЕ МЕТКИ */
+
   logoPin.addEventListener(`mousedown`, function (evt) {
     evt.preventDefault();
     let startCoords = {
@@ -55,8 +103,39 @@
 
     document.addEventListener(`mousemove`, onMouseMove);
     document.addEventListener(`mouseup`, onMouseUp);
-  }
-  );
+  });
+
+  /* ЗАКРЫТИЕ POPUP */
+  const closePopup = popup.querySelector(`.popup__close`);
+
+  const closePin = () => { // закрытие hidden = true;
+    popup.hidden = true;
+  };
+
+  const openNewPin = () => { // открытие
+    popup.hidden = false;
+  };
+
+  const onPopupEnterPress = document.addEventListener(`keydown`, function (evt) { // открытие по Enter
+    if (evt.key === `Enter`) {
+      openNewPin();
+    }
+    document.removeEventListener(`keydown`, onPopupEnterPress);
+  });
+
+  const onPopupEscPress = document.addEventListener(`keydown`, function (evt) { // закрытие по Esc
+    if (evt.key === `Escape`) {
+      closePin();
+    }
+    document.removeEventListener(`keydown`, onPopupEscPress);
+  });
+
+  const onPopupClosePopupClick = closePopup.addEventListener(`click`, function () { // закрытие по клику на крестик
+    closePin();
+    closePopup.removeEventListener(`click`, onPopupClosePopupClick);
+  });
+
   window.map = {
-    logoPin};
+    logoPin,
+  };
 })();

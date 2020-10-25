@@ -27,7 +27,7 @@
 
   /* Генерация данных  объекта (объявления) */
   const getSomeObjects = () => {
-    let newAdd = [];
+    let result = [];
     for (let i = 1; i <= 8; i++) {
       const valueLocationX = window.util.getRandomIntInclusive(0, 1200);
       const valueLocationY = window.util.getRandomIntInclusive(130, 630);
@@ -54,10 +54,10 @@
           'y': valueLocationY,
         },
       };
-      newAdd.push(newObject);
+      result.push(newObject);
     }
-    return newAdd;
+    return result;
   };
-  const newArrObjects = getSomeObjects();
-  window.data = {newArrObjects};
+  const objects = getSomeObjects();
+  window.data = {objects};
 })();

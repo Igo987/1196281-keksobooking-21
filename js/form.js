@@ -4,53 +4,7 @@
 
   /* ФОРМА ОБЪЯВЛЕНИЯ */
   const form = document.querySelector(`.ad-form`);
-  const fieldset = form.querySelectorAll(`fieldset`);
 
-  /* НЕАКТИВНЫЕ ЭЛЕМЕНТЫ ФОРМЫ  (ДОЛЖНЫ БЫТЬ) */
-  const inputFields = form.querySelectorAll(`fieldset`);
-
-  for (let i = 0; i < inputFields.length; i++) {
-    inputFields[i].setAttribute(`disabled`, true);
-  }
-  /* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */ // В FORM
-  let mapBooking = document.querySelector(`.map`);
-  const popup = document.querySelector(`.map__card`);
-  let addressForm = form.querySelector(`#address`);
-  const MAP_PIN_SIZE = 31; // половина ширины и высоты main pin (получаем её центр);
-  addressForm.value = (window.map.logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (window.map.logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
-  popup.hidden = true;
-
-  const activateMap = () => {
-    mapBooking.classList.remove(`map--faded`);
-    popup.hidden = false;
-    form.classList.remove(`ad-form--disabled`);
-    for (let i = 0; i < inputFields.length; i++) {
-      fieldset[i].removeAttribute(`disabled`);
-    }
-    window.map.logoPin.removeEventListener(`keydown`, onLogoPinKeyDown);
-    window.map.logoPin.removeEventListener(`mousedown`, onLogoPinMouseDown);
-  };
-
-  window.map.logoPin.addEventListener(`mousemove`, function () {
-    addressForm.value = (window.map.logoPin.getBoundingClientRect().x) + `,` + (window.map.logoPin.getBoundingClientRect().y);
-  });
-
-  const onLogoPinMouseDown = (evt) => {
-    if (evt.button !== 0) {
-      return;
-    }
-    activateMap();
-  };
-
-  const onLogoPinKeyDown = (evt) => {
-    if (evt.key !== `Enter`) {
-      return;
-    }
-    activateMap();
-  };
-
-  window.map.logoPin.addEventListener(`mousedown`, onLogoPinMouseDown);
-  window.map.logoPin.addEventListener(`keydown`, onLogoPinKeyDown);
 
   /* ВАЛИДАЦИЯ ГРАФ "КОЛИЧЕСТВО КОМНАТ" И "КОЛИЧЕСТВО ГОСТЕЙ" */
   const inputRoom = document.querySelector(`#room_number`); // КОМНАТА
@@ -99,43 +53,25 @@
   };
 
   formHousingTypeSelect.addEventListener(`change`, function (e) {
+    let price;
     switch (e.currentTarget.value) {
       case HOUSING_TYPE.palace:
-        formPriceOfHousingTypeSelect.placeholder = PRICE.palace;
-        formPriceOfHousingTypeSelect.setAttribute(`min`, PRICE.palace);
+        price = PRICE.palace;
         break;
-
       case HOUSING_TYPE.bungalow:
-        formPriceOfHousingTypeSelect.placeholder = PRICE.bungalow;
-        formPriceOfHousingTypeSelect.setAttribute(`min`, PRICE.bungalow);
+        price = PRICE.bungalow;
         break;
-
       case HOUSING_TYPE.flat:
-        formPriceOfHousingTypeSelect.placeholder = PRICE.flat;
-        formPriceOfHousingTypeSelect.setAttribute(`min`, PRICE.flat);
+        price = PRICE.flat;
         break;
-
       case HOUSING_TYPE.house:
-        formPriceOfHousingTypeSelect.placeholder = PRICE.house;
-        formPriceOfHousingTypeSelect.setAttribute(`min`, PRICE.house);
+        price = PRICE.house;
         break;
     }
+    formPriceOfHousingTypeSelect.placeholder = price;
+    formPriceOfHousingTypeSelect.setAttribute(`min`, price);
   });
-
-  /* ЗАКРЫТИЕ POPUP */
-  const closePopup = popup.querySelector(`.popup__close`);
-  closePopup.addEventListener(`click`, function () {
-    popup.hidden = true;
-    closePopup.removeEventListener(`click`, closePopup);
-  });
-
-  document.addEventListener(`keydown`, function (evt) {
-    if (evt.key === `Escape`) {
-      popup.hidden = true;
-    }
-    if (evt.key === `Enter`) {
-      popup.hidden = false;
-    }
-    document.removeEventListener(`keydown`, closePopup);
-  });
+  window.form = {
+    form,
+  };
 })();
