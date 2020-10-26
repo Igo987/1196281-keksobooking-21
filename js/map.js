@@ -5,8 +5,7 @@
   const mapPins = document.querySelector(`.map__pin`);
   const PIN_HEIGHT = 84;
   const PIN_HALF_WIDTH = 32;
-  const pinContainer = document.createElement(`div`);
-  mapPins.after(pinContainer);
+  const pinsContainer = document.createDocumentFragment();
 
   /* ОТРИСОВКА ОБЪЯВЛЕНИЯ */ // В МОДУЛЬ MAP
   window.data.objects.forEach(function (item) {
@@ -18,7 +17,8 @@
     mapPin.style.left = item.location.x + PIN_HALF_WIDTH + `px`;
     mapPin.style.top = item.location.y + PIN_HEIGHT + `px`;
     image.alt = item.offer.title;
-    pinContainer.append(mapPin);
+    pinsContainer.append(mapPin);
+    mapPins.after(pinsContainer);
     mapPin.addEventListener(`click`, () => window.card.render(item));
 
   });
