@@ -30,7 +30,7 @@
     let result = [];
     for (let i = 1; i <= 8; i++) {
       const valueLocationX = window.util.getRandomIntInclusive(0, 1200);
-      const valueLocationY = window.util.getRandomIntInclusive(130, 630);
+      const valueLocationY = window.util.getRandomIntInclusive(0, 700);
       const address = `${valueLocationX}, ${valueLocationY}`;
       let newObject = {
         'author': {

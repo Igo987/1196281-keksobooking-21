@@ -5,6 +5,8 @@
   const mapPins = document.querySelector(`.map__pin`);
   const PIN_HEIGHT = 84;
   const PIN_HALF_WIDTH = 32;
+  const pinContainer = document.createElement(`div`);
+  mapPins.after(pinContainer);
 
   /* ОТРИСОВКА ОБЪЯВЛЕНИЯ */ // В МОДУЛЬ MAP
   window.data.objects.forEach(function (item) {
@@ -16,10 +18,10 @@
     mapPin.style.left = item.location.x + PIN_HALF_WIDTH + `px`;
     mapPin.style.top = item.location.y + PIN_HEIGHT + `px`;
     image.alt = item.offer.title;
-    mapPins.append(mapPin);
+    pinContainer.append(mapPin);
     mapPin.addEventListener(`click`, () => window.card.render(item));
-  });
 
+  });
 
   /* НЕАКТИВНЫЕ ЭЛЕМЕНТЫ ФОРМЫ  (ДОЛЖНЫ БЫТЬ) */
   const inputFields = window.form.form.querySelectorAll(`fieldset`);
@@ -137,5 +139,6 @@
 
   window.map = {
     logoPin,
+    popup
   };
 })();

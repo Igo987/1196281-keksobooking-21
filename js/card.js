@@ -21,20 +21,20 @@
 
   const getGuestsText = (param) => {
     const GUESTS_COUNT_TEXT_RU = {
-      any: `любое число`,
-      2: `двоих`,
-      1: `одного`,
-      0: `не для`,
+      any: `любое число гостей`,
+      2: `2 гостей`,
+      1: `1 гостя`,
+      0: `не для гостей`,
     };
     return GUESTS_COUNT_TEXT_RU[param];
   };
 
   const getRoomsText = (param) => {
     const ROOMS_COUNT_TEXT_RU = {
-      any: `любое число`,
-      1: `одна`,
-      2: `две`,
-      3: `три`,
+      any: `Любое число комнат`,
+      1: `1 комната`,
+      2: `2 комнаты`,
+      3: `3 комнаты`,
     };
     return ROOMS_COUNT_TEXT_RU[param];
   };
@@ -47,8 +47,8 @@
     cardTitle.textContent = object.offer.title;
     cardAddress.textContent = object.offer.address;
     cardPrice.textContent = `Цена ` + object.offer.price + ` ₽/ночь`;
-    cardOffer.textContent = getRoomsText(`${object.offer.rooms.toString()}`) + ` комнаты для ` + getGuestsText(`${object.offer.guests.toString()}`) + ` гостей`;
-    cardTimesInOut.textContent = `Заезд после ` + `${object.offer.checkin}` + ` ,выезд до ` + `${object.offer.checkout}`;
+    cardOffer.textContent = getRoomsText(`${object.offer.rooms.toString()}`) + ` для ` + getGuestsText(`${object.offer.guests.toString()}`);
+    cardTimesInOut.textContent = `Заезд после ` + `${object.offer.checkin}` + `, выезд до ` + `${object.offer.checkout}`;
     cardDescription.textContent = object.offer.description;
 
     switch (object.offer.type) {
@@ -81,8 +81,8 @@
       featuresButton.classList.add(`popup__feature`, `popup__feature--` + valueFeatures[j]);
       features.append(featuresButton);
     }
+    window.map.popup.hidden = false;
   };
-
   window.card = {
     render: renderCard,
   };
