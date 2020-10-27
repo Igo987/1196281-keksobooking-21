@@ -19,15 +19,9 @@
 
   const showPopup = () => { // открытие
     popup.hidden = false;
-    document.removeEventListener(`keydown`, onPopupEscPress);
-    closePopup.removeEventListener(`click`, onPopupClosePopupClick);
+    document.addEventListener(`keydown`, onPopupEscPress);
+    closePopup.addEventListener(`click`, onPopupClosePopupClick);
   };
-
-  // const onPopupEnterPress = mapPins.addEventListener(`keydown`, function (evt) { // открытие по Enter
-  //   if (evt.key === `Enter`) {
-  //     showPopup();
-  //   }
-  // });
 
   const onPopupEscPress = document.addEventListener(`keydown`, function (evt) { // закрытие по Esc
     if (evt.key === `Escape`) {
@@ -51,8 +45,10 @@
     image.alt = item.offer.title;
     pinsContainer.append(mapPin);
     mapPins.after(pinsContainer);
-    mapPin.addEventListener(`click`, () => window.card.render(item));
-    showPopup();
+    mapPin.addEventListener(`click`, () => {
+      window.card.render(item);
+      showPopup();
+    });
     mapPin.hidden = true;
   });
 
@@ -73,7 +69,7 @@
 
   const activateMap = () => {
     mapBooking.classList.remove(`map--faded`);
-    popup.hidden = false;
+    showPopup();
     window.form.form.classList.remove(`ad-form--disabled`);
     for (let i = 0; i < inputFields.length; i++) {
       inputFields[i].removeAttribute(`disabled`);
