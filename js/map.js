@@ -7,6 +7,38 @@
   const PIN_HALF_WIDTH = 32;
   const pinsContainer = document.createDocumentFragment();
 
+  /* ЗАКРЫТИЕ POPUP */
+  const popup = document.querySelector(`.map__card`);
+  const closePopup = popup.querySelector(`.popup__close`);
+
+  const hidePopup = () => { // закрытие
+    popup.hidden = true;
+    closePopup.removeEventListener(`click`, onPopupClosePopupClick);
+    document.removeEventListener(`keydown`, onPopupEscPress);
+  };
+
+  const showPopup = () => { // открытие
+    popup.hidden = false;
+    document.removeEventListener(`keydown`, onPopupEscPress);
+    closePopup.removeEventListener(`click`, onPopupClosePopupClick);
+  };
+
+  // const onPopupEnterPress = mapPins.addEventListener(`keydown`, function (evt) { // открытие по Enter
+  //   if (evt.key === `Enter`) {
+  //     showPopup();
+  //   }
+  // });
+
+  const onPopupEscPress = document.addEventListener(`keydown`, function (evt) { // закрытие по Esc
+    if (evt.key === `Escape`) {
+      hidePopup();
+    }
+  });
+
+  const onPopupClosePopupClick = closePopup.addEventListener(`click`, function () { // закрытие по клику на крестик
+    hidePopup();
+  });
+
   /* ОТРИСОВКА ОБЪЯВЛЕНИЯ */ // В МОДУЛЬ MAP
   window.data.objects.forEach(function (item) {
     const pin = document.querySelector(`#pin`).content;
@@ -20,7 +52,8 @@
     pinsContainer.append(mapPin);
     mapPins.after(pinsContainer);
     mapPin.addEventListener(`click`, () => window.card.render(item));
-
+    showPopup();
+    mapPin.hidden = true;
   });
 
   /* НЕАКТИВНЫЕ ЭЛЕМЕНТЫ ФОРМЫ  (ДОЛЖНЫ БЫТЬ) */
@@ -32,11 +65,11 @@
   /* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */
   let logoPin = document.querySelector(`.map__pin--main`);
   let mapBooking = document.querySelector(`.map`);
-  const popup = document.querySelector(`.map__card`);
   let addressForm = window.form.form.querySelector(`#address`);
   const MAP_PIN_SIZE = 31; // половина ширины и высоты main pin (получаем её центр);
   addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
   popup.hidden = true;
+
 
   const activateMap = () => {
     mapBooking.classList.remove(`map--faded`);
@@ -44,6 +77,10 @@
     window.form.form.classList.remove(`ad-form--disabled`);
     for (let i = 0; i < inputFields.length; i++) {
       inputFields[i].removeAttribute(`disabled`);
+    }
+    const allPins = Array.from(document.querySelectorAll(`.map__pin`)); // пробовал через map,но ESLint не пропускает.Почему-то.
+    for (let i = 0; i < allPins.length; i++) {
+      allPins[i].hidden = false;
     }
     logoPin.removeEventListener(`keydown`, onLogoPinKeyDown);
     logoPin.removeEventListener(`mousedown`, onLogoPinMouseDown);
@@ -107,35 +144,6 @@
     document.addEventListener(`mouseup`, onMouseUp);
   });
 
-  /* ЗАКРЫТИЕ POPUP */
-  const closePopup = popup.querySelector(`.popup__close`);
-
-  const hidePopup = () => { // закрытие hidden = true;
-    popup.hidden = true;
-    closePopup.removeEventListener(`click`, onPopupClosePopupClick);
-    document.removeEventListener(`keydown`, onPopupEscPress);
-  };
-
-  const showPopup = () => { // открытие
-    popup.hidden = false;
-    mapPins.removeEventListener(`keydown`, onPopupEnterPress);
-  };
-
-  const onPopupEnterPress = mapPins.addEventListener(`keydown`, function (evt) { // открытие по Enter
-    if (evt.key === `Enter`) {
-      showPopup();
-    }
-  });
-
-  const onPopupEscPress = document.addEventListener(`keydown`, function (evt) { // закрытие по Esc
-    if (evt.key === `Escape`) {
-      hidePopup();
-    }
-  });
-
-  const onPopupClosePopupClick = closePopup.addEventListener(`click`, function () { // закрытие по клику на крестик
-    hidePopup();
-  });
 
   window.map = {
     logoPin,
