@@ -110,31 +110,31 @@
   /* ЗАКРЫТИЕ POPUP */
   const closePopup = popup.querySelector(`.popup__close`);
 
-  const closePin = () => { // закрытие hidden = true;
+  const hidePopup = () => { // закрытие hidden = true;
     popup.hidden = true;
     closePopup.removeEventListener(`click`, onPopupClosePopupClick);
     document.removeEventListener(`keydown`, onPopupEscPress);
   };
 
-  const openNewPin = () => { // открытие
+  const showPopup = () => { // открытие
     popup.hidden = false;
     mapPins.removeEventListener(`keydown`, onPopupEnterPress);
   };
 
   const onPopupEnterPress = mapPins.addEventListener(`keydown`, function (evt) { // открытие по Enter
     if (evt.key === `Enter`) {
-      openNewPin();
+      showPopup();
     }
   });
 
   const onPopupEscPress = document.addEventListener(`keydown`, function (evt) { // закрытие по Esc
     if (evt.key === `Escape`) {
-      closePin();
+      hidePopup();
     }
   });
 
   const onPopupClosePopupClick = closePopup.addEventListener(`click`, function () { // закрытие по клику на крестик
-    closePin();
+    hidePopup();
   });
 
   window.map = {
