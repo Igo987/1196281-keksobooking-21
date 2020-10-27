@@ -1,6 +1,6 @@
 'use strict';
 (function () {
-  /* блок объявлений */
+  /* Блок объявлений */
   const filterContainers = document.querySelector(`.map__filters-container`);
   const card = document.querySelector(`#card`).content; // шаблон объявления
   const newCard = card.cloneNode(true); // клонирование шаблона

@@ -2,7 +2,7 @@
 
 (function () {
   window.util = {
-    /* Функция получения случайного целого числа в диапозоне */
+    /* Функция Получения случайного целого числа в диапозоне */
     getRandomIntInclusive: function getRandomIntInclusive(min, max) {
       min = Math.ceil(min);
       max = Math.floor(max);

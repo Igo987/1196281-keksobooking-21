@@ -1,7 +1,7 @@
 "use strict";
 
 (function () {
-  /* Добавление объявления с данными из массива*/
+  /* Добавление Объявления с данными из массива*/
   const mapPins = document.querySelector(`.map__pin`);
   const PIN_HEIGHT = 84;
   const PIN_HALF_WIDTH = 32;
@@ -33,7 +33,7 @@
     hidePopup();
   });
 
-  /* ОТРИСОВКА ОБЪЯВЛЕНИЯ */ // В МОДУЛЬ MAP
+  /* ОТРИСОВКА ОБЪЯВЛЕНИЯ */
   window.data.objects.forEach(function (item) {
     const pin = document.querySelector(`#pin`).content;
     const newPin = pin.cloneNode(true);
