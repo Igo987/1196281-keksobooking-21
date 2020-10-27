@@ -1,7 +1,7 @@
 'use strict';
 (function () {
 
-  /* количество комнат */
+  /* Количество комнат */
   const roomOptionElementsValue = Array.from(document.querySelector(`#housing-rooms`).children).map((el) => el.value);
 
   /* время заселения */

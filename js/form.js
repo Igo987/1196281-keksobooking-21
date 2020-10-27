@@ -21,7 +21,7 @@
     }
   });
 
-  /* ВАЛИДАЦИЯ "Время заезда" и "Время выезда" */
+  /* ВАЛИДАЦИЯ "Время Заезда" и "Время Выезда" */
   const formTimeIn = form.querySelector(`#timein`);
   const formTimeOut = form.querySelector(`#timeout`);
   const formTimeOutValues = Array.from(formTimeOut);
