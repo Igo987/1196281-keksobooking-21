@@ -112,29 +112,29 @@
 
   const closePin = () => { // закрытие hidden = true;
     popup.hidden = true;
+    closePopup.removeEventListener(`click`, onPopupClosePopupClick);
+    document.removeEventListener(`keydown`, onPopupEscPress);
   };
 
   const openNewPin = () => { // открытие
     popup.hidden = false;
+    mapPins.removeEventListener(`keydown`, onPopupEnterPress);
   };
 
-  const onPopupEnterPress = document.addEventListener(`keydown`, function (evt) { // открытие по Enter
+  const onPopupEnterPress = mapPins.addEventListener(`keydown`, function (evt) { // открытие по Enter
     if (evt.key === `Enter`) {
       openNewPin();
     }
-    document.removeEventListener(`keydown`, onPopupEnterPress);
   });
 
   const onPopupEscPress = document.addEventListener(`keydown`, function (evt) { // закрытие по Esc
     if (evt.key === `Escape`) {
       closePin();
     }
-    document.removeEventListener(`keydown`, onPopupEscPress);
   });
 
   const onPopupClosePopupClick = closePopup.addEventListener(`click`, function () { // закрытие по клику на крестик
     closePin();
-    closePopup.removeEventListener(`click`, onPopupClosePopupClick);
   });
 
   window.map = {
