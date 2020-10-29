@@ -34,7 +34,7 @@
       const address = `${valueLocationX}, ${valueLocationY}`;
       let newObject = {
         'author': {
-          'avatar': `img/avatars/user02.png`,
+          'avatar': `img/avatars/user0` + i + `.png`,
         },
         'offer': {
           'title': TEXT,

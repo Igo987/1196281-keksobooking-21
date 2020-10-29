@@ -19,7 +19,6 @@
 
   const showPopup = () => { // открытие
     popup.hidden = false;
-
     document.addEventListener(`keydown`, onPopupEscPress);
     closePopup.addEventListener(`click`, onPopupClosePopupClick);
   };
@@ -34,7 +33,6 @@
     hidePopup();
   });
 
-  /* ОТРИСОВКА ОБЪЯВЛЕНИЯ */
   let renderPins = (objects) => {
     objects.forEach((item) => {
       const pin = document.querySelector(`#pin`).content;
@@ -56,7 +54,6 @@
     });
   };
   window.load(renderPins); // пока без второго параметра
-
 
   /* НЕАКТИВНЫЕ ЭЛЕМЕНТЫ ФОРМЫ  (ДОЛЖНЫ БЫТЬ) */
   const inputFields = window.form.form.querySelectorAll(`fieldset`);
