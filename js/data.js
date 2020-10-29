@@ -34,7 +34,7 @@
       const address = `${valueLocationX}, ${valueLocationY}`;
       let newObject = {
         'author': {
-          'avatar': `img/avatars/user0` + i + `.png`,
+          'avatar': `img/avatars/user02.png`,
         },
         'offer': {
           'title': TEXT,
@@ -59,5 +59,5 @@
     return result;
   };
   const objects = getSomeObjects();
-  window.data = {objects};
+  window.data = { objects };
 })();
