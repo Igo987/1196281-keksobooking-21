@@ -59,5 +59,5 @@
     return result;
   };
   const objects = getSomeObjects();
-  window.data = { objects };
+  window.data = {objects};
 })();
