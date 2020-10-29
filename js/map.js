@@ -55,6 +55,7 @@
       mapPin.hidden = true;
     });
   };
+  // renderPins(window.data.objects);
   window.load(renderPins); // пока без второго параметра
 
 
