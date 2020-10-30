@@ -10,11 +10,13 @@
   /* ЗАКРЫТИЕ POPUP */
   const popup = document.querySelector(`.map__card`);
   const closePopup = popup.querySelector(`.popup__close`);
+  // const allMapPins = document.querySelectorAll(`.map__pin`);
 
   const hidePopup = () => { // закрытие
     popup.hidden = true;
     closePopup.removeEventListener(`click`, onPopupClosePopupClick);
     document.removeEventListener(`keydown`, onPopupEscPress);
+    document.querySelectorAll(`.map__pin`).forEach((el) => el.classList.remove(`map-pin--active`));
   };
 
   const showPopup = () => { // открытие
@@ -33,7 +35,7 @@
     hidePopup();
   });
 
-  let renderPins = (objects) => {
+  const renderPins = (objects) => {
     objects.forEach((item) => {
       const pin = document.querySelector(`#pin`).content;
       const newPin = pin.cloneNode(true);
@@ -44,12 +46,13 @@
       mapPin.style.top = item.location.y + PIN_HEIGHT + `px`;
       image.alt = item.offer.title;
       pinsContainer.append(mapPin);
-      mapPins.after(pinsContainer);
       mapPin.addEventListener(`click`, () => {
-        mapPin.classList.add(`map__pin--main`); // элемент с мэйн только один, надо с остальных удалить
+        document.querySelectorAll(`.map__pin`).forEach((el) => el.classList.remove(`map-pin--active`));
+        mapPin.classList.add(`map-pin--active`);
         window.card.render(item);
         showPopup();
       });
+      mapPins.after(pinsContainer);
       mapPin.hidden = true;
     });
   };
