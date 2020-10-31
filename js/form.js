@@ -3,8 +3,7 @@
 (function () {
 
   /* ФОРМА ОБЪЯВЛЕНИЯ */
-  const form = document.querySelector(`.ad-form`);
-
+  const adForm = document.querySelector(`.ad-form`);
 
   /* ВАЛИДАЦИЯ ГРАФ "КОЛИЧЕСТВО КОМНАТ" И "КОЛИЧЕСТВО ГОСТЕЙ" */
   const inputRoom = document.querySelector(`#room_number`); // КОМНАТА
@@ -22,8 +21,8 @@
   });
 
   /* ВАЛИДАЦИЯ "Время Заезда" и "Время Выезда" */
-  const formTimeIn = form.querySelector(`#timein`);
-  const formTimeOut = form.querySelector(`#timeout`);
+  const formTimeIn = adForm.querySelector(`#timein`);
+  const formTimeOut = adForm.querySelector(`#timeout`);
   const formTimeOutValues = Array.from(formTimeOut);
 
   formTimeIn.addEventListener(`change`, function (e) {
@@ -34,9 +33,32 @@
     }
   });
 
+  /* НЕАКТИВНЫЕ ЭЛЕМЕНТЫ ФОРМЫ  (ДОЛЖНЫ БЫТЬ) */
+  const inputFields = adForm.querySelectorAll(`fieldset`);
+  for (let i = 0; i < inputFields.length; i++) {
+    inputFields[i].setAttribute(`disabled`, true);
+  }
+
+  /* АКТИВАЦИЯ ФОРМЫ */
+  const mapBooking = document.querySelector(`.map`);
+  const activateMap = () => {
+    mapBooking.classList.remove(`map--faded`);
+    window.map.showPopup();
+    window.form.adForm.classList.remove(`ad-form--disabled`);
+    for (let i = 0; i < inputFields.length; i++) {
+      inputFields[i].removeAttribute(`disabled`);
+    }
+    const allPins = Array.from(document.querySelectorAll(`.map__pin`)); // пробовал через map,но ESLint не пропускает.Почему-то.
+    for (let i = 0; i < allPins.length; i++) {
+      allPins[i].hidden = false;
+    }
+    window.map.logoPin.removeEventListener(`keydown`, window.map.onLogoPinKeyDown);
+    window.map.logoPin.removeEventListener(`mousedown`, window.map.onLogoPinMouseDown);
+  };
+
   /* ВАЛИДАЦИЯ "Тип жилья" и "Цена за ночь" */
-  const formHousingTypeSelect = form.querySelector(`#type`);
-  const formPriceOfHousingTypeSelect = form.querySelector(`#price`);
+  const formHousingTypeSelect = adForm.querySelector(`#type`);
+  const formPriceOfHousingTypeSelect = adForm.querySelector(`#price`);
 
   const HOUSING_TYPE = {
     flat: `flat`,
@@ -72,6 +94,8 @@
     formPriceOfHousingTypeSelect.setAttribute(`min`, price);
   });
   window.form = {
-    form,
+    adForm,
+    activateMap,
+
   };
 })();

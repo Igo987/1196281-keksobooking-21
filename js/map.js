@@ -4,7 +4,7 @@
   /* Добавление Объявления с данными из массива*/
   const mapPins = document.querySelector(`.map__pin`);
   const PIN_HEIGHT = 84;
-  const PIN_HALF_WIDTH = 32;
+  const PIN_HALF_WIDTH = 31;
   const pinsContainer = document.createDocumentFragment();
 
   /* ЗАКРЫТИЕ POPUP */
@@ -58,52 +58,26 @@
   };
   window.load(renderPins); // пока без второго параметра
 
-  /* НЕАКТИВНЫЕ ЭЛЕМЕНТЫ ФОРМЫ  (ДОЛЖНЫ БЫТЬ) */
-  const inputFields = window.form.form.querySelectorAll(`fieldset`);
-  for (let i = 0; i < inputFields.length; i++) {
-    inputFields[i].setAttribute(`disabled`, true);
-  }
 
   /* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */
-  let logoPin = document.querySelector(`.map__pin--main`);
-  let mapBooking = document.querySelector(`.map`);
-  let addressForm = window.form.form.querySelector(`#address`);
+  const logoPin = document.querySelector(`.map__pin--main`);
+  const addressForm = window.form.adForm.querySelector(`#address`);
   const MAP_PIN_SIZE = 31; // половина ширины и высоты main pin (получаем её центр);
   addressForm.value = (logoPin.getBoundingClientRect().x - MAP_PIN_SIZE) + `,` + (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
   popup.hidden = true;
-
-
-  const activateMap = () => {
-    mapBooking.classList.remove(`map--faded`);
-    showPopup();
-    window.form.form.classList.remove(`ad-form--disabled`);
-    for (let i = 0; i < inputFields.length; i++) {
-      inputFields[i].removeAttribute(`disabled`);
-    }
-    const allPins = Array.from(document.querySelectorAll(`.map__pin`)); // пробовал через map,но ESLint не пропускает.Почему-то.
-    for (let i = 0; i < allPins.length; i++) {
-      allPins[i].hidden = false;
-    }
-    logoPin.removeEventListener(`keydown`, onLogoPinKeyDown);
-    logoPin.removeEventListener(`mousedown`, onLogoPinMouseDown);
-  };
-
-  logoPin.addEventListener(`mousemove`, function () {
-    addressForm.value = (logoPin.getBoundingClientRect().x) + `,` + (logoPin.getBoundingClientRect().y);
-  });
 
   const onLogoPinMouseDown = (evt) => {
     if (evt.button !== 0) {
       return;
     }
-    activateMap();
+    window.form.activateMap();
   };
 
   const onLogoPinKeyDown = (evt) => {
     if (evt.key !== `Enter`) {
       return;
     }
-    activateMap();
+    window.form.activateMap();
   };
 
   logoPin.addEventListener(`mousedown`, onLogoPinMouseDown);
@@ -120,6 +94,7 @@
 
     let onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
+      addressForm.value = (logoPin.getBoundingClientRect().x) + `,` + (logoPin.getBoundingClientRect().y);
 
       const shift = {
         x: startCoords.x - moveEvt.clientX,
@@ -133,11 +108,27 @@
 
       logoPin.style.top = (logoPin.offsetTop - shift.y) + `px`;
       logoPin.style.left = (logoPin.offsetLeft - shift.x) + `px`;
-    };
 
+      const UPPER_LIMIT_Y_LOGOPIN = `130px`;
+      const LOWER_LIMIT_Y_LOGOPIN = `630px`;
+      if (logoPin.style.top < UPPER_LIMIT_Y_LOGOPIN) {
+        logoPin.style.top = UPPER_LIMIT_Y_LOGOPIN;
+      }
+      if (logoPin.style.top > LOWER_LIMIT_Y_LOGOPIN) {
+        logoPin.style.top = LOWER_LIMIT_Y_LOGOPIN;
+      }
+
+      // const LEFT_LIMIT_X_LOGOPIN = `0px`; // ТЗ: Значение X-координаты адреса должно быть ограничено размерами блока, в котором перемещается метка. Размер блока 1200px;
+      // const RIGTH_LIMIT_X_LOGOPIN = `1169px`; // 1200 - 31 (PIN_HALF_WIDTH). По идее, это центр метки, т.к. её ширина 62px.
+      // if (logoPin.style.left < LEFT_LIMIT_X_LOGOPIN) {
+      //   logoPin.style.left = LEFT_LIMIT_X_LOGOPIN;
+      // }
+      // if (logoPin.style.left > RIGTH_LIMIT_X_LOGOPIN) {
+      //   logoPin.style.left = RIGTH_LIMIT_X_LOGOPIN;
+      // }
+    };
     const onMouseUp = function (upEvt) {
       upEvt.preventDefault();
-
       document.removeEventListener(`mousemove`, onMouseMove);
       document.removeEventListener(`mouseup`, onMouseUp);
     };
@@ -146,9 +137,11 @@
     document.addEventListener(`mouseup`, onMouseUp);
   });
 
-
   window.map = {
     logoPin,
-    popup
+    popup,
+    showPopup,
+    onLogoPinMouseDown,
+    onLogoPinKeyDown
   };
 })();
