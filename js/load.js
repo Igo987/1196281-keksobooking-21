@@ -29,17 +29,16 @@
       main.appendChild(errorMessage);
     };
 
-    xhr.addEventListener(`timeout`, function () {
+    xhr.addEventListener(`timeout`, () => {
       let message = `За ${xhr.timeout} мс не удалось получить данные. Перезвоните позже.`;
       showErrorMessage(message);
     });
 
-    xhr.addEventListener(`load`, function () {
+    xhr.addEventListener(`load`, () => {
       if (xhr.status !== 200) {
         let message = `Ошибка ${xhr.status}: ${xhr.statusText}`;
         showErrorMessage(message);
       }
-
       onSuccess(xhr.response);
     });
   };
