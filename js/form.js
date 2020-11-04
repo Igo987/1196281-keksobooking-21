@@ -3,8 +3,7 @@
 (function () {
 
   /* ФОРМА ОБЪЯВЛЕНИЯ */
-  const form = document.querySelector(`.ad-form`);
-
+  const host = document.querySelector(`.ad-form`);
 
   /* ВАЛИДАЦИЯ ГРАФ "КОЛИЧЕСТВО КОМНАТ" И "КОЛИЧЕСТВО ГОСТЕЙ" */
   const inputRoom = document.querySelector(`#room_number`); // КОМНАТА
@@ -22,8 +21,8 @@
   });
 
   /* ВАЛИДАЦИЯ "Время Заезда" и "Время Выезда" */
-  const formTimeIn = form.querySelector(`#timein`);
-  const formTimeOut = form.querySelector(`#timeout`);
+  const formTimeIn = host.querySelector(`#timein`);
+  const formTimeOut = host.querySelector(`#timeout`);
   const formTimeOutValues = Array.from(formTimeOut);
 
   formTimeIn.addEventListener(`change`, function (e) {
@@ -34,9 +33,28 @@
     }
   });
 
+  /* НЕАКТИВНЫЕ ЭЛЕМЕНТЫ ФОРМЫ  (ДОЛЖНЫ БЫТЬ) */
+  const inputFields = host.querySelectorAll(`fieldset`);
+  for (let i = 0; i < inputFields.length; i++) {
+    inputFields[i].setAttribute(`disabled`, true);
+  }
+
+  const activateForm = () => {
+    host.classList.remove(`ad-form--disabled`);
+    for (let i = 0; i < inputFields.length; i++) {
+      inputFields[i].removeAttribute(`disabled`);
+    }
+  };
+
+  /* Отоображение координат метки в графе `Адрес` */
+  const addressForm = host.querySelector(`#address`);
+  const updateAddress = (x, y) => {
+    addressForm.value = `${x}, ${y}`;
+  };
+
   /* ВАЛИДАЦИЯ "Тип жилья" и "Цена за ночь" */
-  const formHousingTypeSelect = form.querySelector(`#type`);
-  const formPriceOfHousingTypeSelect = form.querySelector(`#price`);
+  const formHousingTypeSelect = host.querySelector(`#type`);
+  const formPriceOfHousingTypeSelect = host.querySelector(`#price`);
 
   const HOUSING_TYPE = {
     flat: `flat`,
@@ -72,6 +90,11 @@
     formPriceOfHousingTypeSelect.setAttribute(`min`, price);
   });
   window.form = {
-    form,
+    host,
+    inputFields,
+    activateForm,
+    updateAddress,
+    addressForm,
+
   };
 })();
