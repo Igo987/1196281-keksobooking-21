@@ -54,7 +54,7 @@
       mapPin.hidden = true;
     });
   };
-  window.load(renderPins); // пока без второго параметра
+  window.load(renderPins); // загрузка данных
 
   /* АКТИВАЦИЯ ФОРМЫ */
   const mapBooking = document.querySelector(`.map`);
@@ -72,9 +72,8 @@
 
   /* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */
   const logoPin = document.querySelector(`.map__pin--main`);
-  // const addressForm = window.form.host.querySelector(`#address`);
   const MAP_PIN_SIZE = 31; // половина ширины и высоты main pin (получаем её центр);
-  window.form.updateAddress((logoPin.getBoundingClientRect().x - MAP_PIN_SIZE), (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE));
+  window.form.updateAddress(logoPin.getBoundingClientRect().x - MAP_PIN_SIZE, logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
   popup.hidden = true;
 
   const onLogoPinMouseDown = (evt) => {
@@ -120,24 +119,24 @@
       logoPin.style.top = (logoPin.offsetTop - shift.y) + `px`;
       logoPin.style.left = (logoPin.offsetLeft - shift.x) + `px`;
 
-      // const UPPER_LIMIT_Y_LOGOPIN = `130px`;
-      // const LOWER_LIMIT_Y_LOGOPIN = `630px`;
-      // if (logoPin.style.top < UPPER_LIMIT_Y_LOGOPIN) {
-      //   logoPin.style.top = UPPER_LIMIT_Y_LOGOPIN;
-      // }
-      // if (logoPin.style.top > LOWER_LIMIT_Y_LOGOPIN) {
-      //   logoPin.style.top = LOWER_LIMIT_Y_LOGOPIN;
-      // }
-      // let CoordinatesOfThePin = window.map.logoPin.style.left.split(``);
-      // let NumberOfCoordinatesOfThePin = CoordinatesOfThePin.slice(0, CoordinatesOfThePin.length - 2).join(``);
-      // const LEFT_LIMIT_X_LOGOPIN = -31; // ТЗ: Значение X-координаты адреса должно быть ограничено размерами блока, в котором перемещается метка. Размер блока 1200px;
-      // const RIGTH_LIMIT_X_LOGOPIN = 1169; // 1200 - 31 (PIN_HALF_WIDTH).
-      // if (NumberOfCoordinatesOfThePin < LEFT_LIMIT_X_LOGOPIN) {
-      //   logoPin.style.left = `${LEFT_LIMIT_X_LOGOPIN}px`;
-      // }
-      // if (NumberOfCoordinatesOfThePin > RIGTH_LIMIT_X_LOGOPIN) {
-      //   logoPin.style.left = `${RIGTH_LIMIT_X_LOGOPIN}px`;
-      // }
+      /* Ограничение передвижения метки */
+      /* Вертикаль*/
+      const UPPER_LIMIT_Y_LOGOPIN = 130;
+      const LOWER_LIMIT_Y_LOGOPIN = 630;
+      if (logoPin.getBoundingClientRect().y < UPPER_LIMIT_Y_LOGOPIN) {
+        logoPin.style.top = `${UPPER_LIMIT_Y_LOGOPIN}px`;
+      } else if (logoPin.getBoundingClientRect().y > LOWER_LIMIT_Y_LOGOPIN) {
+        logoPin.style.top = `${LOWER_LIMIT_Y_LOGOPIN}px`;
+      }
+      /* Горизонталь */
+      const LEFT_LIMIT_X_LOGOPIN = 41;
+      const RIGTH_LIMIT_X_LOGOPIN = 1169;
+
+      if (logoPin.getBoundingClientRect().x < LEFT_LIMIT_X_LOGOPIN) {
+        logoPin.style.left = `-${PIN_HALF_WIDTH}px`;
+      } else if (logoPin.getBoundingClientRect().x > RIGTH_LIMIT_X_LOGOPIN) {
+        logoPin.style.left = `${RIGTH_LIMIT_X_LOGOPIN}px`;
+      }
     };
     const onMouseUp = function (upEvt) {
       upEvt.preventDefault();
@@ -155,5 +154,7 @@
     showPopup,
     onLogoPinMouseDown,
     onLogoPinKeyDown,
+    mapBooking,
+    hidePopup
   };
 })();
