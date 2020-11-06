@@ -56,26 +56,6 @@
   };
   window.load(renderPins); // загрузка данных
 
-  /* ОТПРАВКА ДАННЫХ */
-  // const form = document.querySelector(`.ad-form`); // форма объявления
-  // const buttonSubmit = form.querySelector(`.ad-form__submit`); // кнопка отправки формы объявлений
-
-  // buttonSubmit.addEventListener(`click`, function (evt) {
-  //   const inputsForm = host.querySelectorAll(`input`);
-  //   for (let i = 0; inputsForm.length > i; i++) {
-  //     const inputForm = inputsForm[i];
-  //     if (inputForm.checkValidity() === false) {
-  //       inputForm.style.border = `2px solid red`;
-
-  //       const customValidityMessage = document.querySelector(`#error`).content;
-  //       const clone = customValidityMessage.cloneNode(true);
-  //       const main = document.querySelector(`main`);
-  //       main.prepend(clone);
-  //       host.preventDefault();
-  //     }
-  //   }
-  // });
-
   /* АКТИВАЦИЯ ФОРМЫ */
   const mapBooking = document.querySelector(`.map`);
   const activateMap = () => {

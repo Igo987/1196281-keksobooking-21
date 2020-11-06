@@ -46,75 +46,6 @@
     }
   };
 
-  /* ВАЛИДАЦИЯ ФОРМЫ */
-  const inputsForm = host.querySelectorAll(`input`);
-  const buttonSubmit = host.querySelector(`.ad-form__submit`); // кнопка отправки формы объявлений
-  let customValidityMessage = document.querySelector(`#error`).content;
-
-  host.addEventListener(`submit`, function (e) {
-    // ????????
-    e.preventDefault();
-  });
-
-  buttonSubmit.addEventListener(`click`, function () {
-    const a = formPriceOfHousingTypeSelect.placeholder < formPriceOfHousingTypeSelect.value;
-    for (let i = 0; inputsForm.length > i; i++) {
-      const inputForm = inputsForm[i]; // все инпуты в форме
-      if (inputForm.checkValidity() === false || a) { // если поле не проходит валидацию или если введенное значение цены за ночь меньше минимального (оно содержится в placeholder)
-      // host.reportValidity();
-        const clone = customValidityMessage.cloneNode(true);
-        const main = document.querySelector(`main`);
-        const buttonClose = clone.querySelector(`.error__button`);
-        main.prepend(clone); // беру такой и показываю сообщение об ошибке (взятое из шаблона)
-
-        const closeMessage = () => {
-          document.querySelector(`.error`).hidden = `false`; // здесь закрытие сообщения об ошибке
-          buttonClose.removeEventListener(`click`, onButtonCloseClick);
-          document.removeEventListener(`keydown`, onDocumentEscPress);
-        };
-
-        const onButtonCloseClick = () => closeMessage();
-
-        buttonClose.addEventListener(`click`, onButtonCloseClick);
-
-        const onDocumentEscPress = (evt) => { // закрытие по Esc
-          if (evt.key === `Escape`) {
-            closeMessage();
-          }
-
-        };
-        document.addEventListener(`keydown`, onDocumentEscPress);
-        window.map.hidePopup(); // закрываю и popup
-        host.preventDefault(); // прерываю отправку формы
-      }
-    }
-  });
-
-  /* Деактивация формы */
-  const getFormNotActive = () => {
-    const FormInputFields = host.querySelectorAll(`fieldset`);
-    for (let i = 0; i < FormInputFields.length; i++) {
-      FormInputFields[i].setAttribute(`disabled`, true);
-    }
-    host.classList.add(`ad-form--disabled`);
-    window.map.mapBooking.classList.add(`map--faded`);
-    window.map.hidePopup();
-    host.reset();
-    updateAddress((window.map.logoPin.getBoundingClientRect().x), (window.map.logoPin.getBoundingClientRect().y));
-  };
-
-  /* Отоображение координат метки в графе `Адрес` */
-  const addressForm = host.querySelector(`#address`);
-  const updateAddress = (x, y) => {
-    addressForm.value = `${x}, ${y}`;
-  };
-
-  /* КНОПКА СБРОСА */
-  const formReset = document.querySelector(`.ad-form__reset`);
-  formReset.addEventListener(`click`, () => {
-    getFormNotActive();
-  });
-
   /* ВАЛИДАЦИЯ "Тип жилья" и "Цена за ночь" */
   const formHousingTypeSelect = host.querySelector(`#type`);
   const formPriceOfHousingTypeSelect = host.querySelector(`#price`);
@@ -152,6 +83,111 @@
     formPriceOfHousingTypeSelect.placeholder = price;
     formPriceOfHousingTypeSelect.setAttribute(`min`, price);
   });
+
+  /* ВАЛИДАЦИЯ ФОРМЫ ПРИ ОТПРАВКЕ */
+  const inputsForm = host.querySelectorAll(`input`);
+  const buttonSubmit = host.querySelector(`.ad-form__submit`); // кнопка отправки формы объявлений
+  const customValidityMessageError = document.querySelector(`#error`).content;
+  const customValidityMessage = document.querySelector(`#success`).content;
+
+  const successMessage = () => {
+    const cloneValidityTemplate = customValidityMessage.cloneNode(true);
+    const main = document.querySelector(`main`);
+    main.prepend(cloneValidityTemplate);
+    resetForm();
+  };
+
+  const errorMessage = () => {
+    const cloneErrorTemplate = customValidityMessageError.cloneNode(true);
+    const main = document.querySelector(`main`);
+    main.prepend(cloneErrorTemplate);
+  };
+
+  // const onButtonCloseClick = () => closeErrorMessage();
+
+  // const onDocumentEscPress = (evt) =>{
+  //   if (evt.key === `Escape`) {
+  //     closeErrorMessage();
+  //   }
+  // };
+  // document.addEventListener(`keydown`, onDocumentEscPress);
+
+  // const closeErrorMessage = () => {
+  //   const cloneErrorTemplate = customValidityMessageError.cloneNode(true);
+  //   document.querySelector(`.error`).hidden = `false`;
+  //   const buttonClose = cloneErrorTemplate.querySelector(`.error__button`);
+  //   buttonClose.addEventListener(`click`, onButtonCloseClick);
+  //   buttonClose.removeEventListener(`click`, onButtonCloseClick);
+  //   document.removeEventListener(`keydown`, onDocumentEscPress);
+  // };
+
+  /* КНОПКА СБРОСА */
+  const formReset = document.querySelector(`.ad-form__reset`);
+  const resetForm = () => {
+    formReset.addEventListener(`click`, () => {
+      host.reset();
+      updateAddress((window.map.logoPin.getBoundingClientRect().x), (window.map.logoPin.getBoundingClientRect().y));
+    });
+  };
+
+  buttonSubmit.addEventListener(`click`, function () {
+    const validValuePrice = Number(formPriceOfHousingTypeSelect.placeholder) <= Number(formPriceOfHousingTypeSelect.value);
+    const validValueTime = formTimeIn.value === formTimeOut.value;
+    const capacityOfTheHousing = inputCapacity.value <= inputRoom.value;
+    inputsForm.forEach((input) => {
+      input.addEventListener(`change`, () => {
+        if (validValuePrice !== true || validValueTime !== true || capacityOfTheHousing !== true) {
+          input.style.border = `2px solid red`;
+          errorMessage();
+
+          const closeErrorMessage = () => {
+            const cloneErrorTemplate = customValidityMessageError.cloneNode(true);
+            document.querySelector(`.error`).hidden = `false`;
+            const buttonClose = cloneErrorTemplate.querySelector(`.error__button`);
+            buttonClose.addEventListener(`click`, onButtonCloseClick);
+            buttonClose.removeEventListener(`click`, onButtonCloseClick);
+            document.removeEventListener(`keydown`, onDocumentEscPress);
+          };
+
+          const onButtonCloseClick = () => closeErrorMessage();
+
+          const onDocumentEscPress = (evt) => {
+            if (evt.key === `Escape`) {
+              closeErrorMessage();
+            }
+          };
+          document.addEventListener(`keydown`, onDocumentEscPress);
+
+
+          window.map.hidePopup();
+        } else {
+          host.preventDefault();
+          window.map.hidePopup();
+          successMessage();
+        }
+      });
+    });
+  });
+
+  /* Деактивация формы */
+  const getFormNotActive = () => {
+    const FormInputFields = host.querySelectorAll(`fieldset`);
+    for (let i = 0; i < FormInputFields.length; i++) {
+      FormInputFields[i].setAttribute(`disabled`, true);
+    }
+    host.classList.add(`ad-form--disabled`);
+    window.map.mapBooking.classList.add(`map--faded`);
+    window.map.hidePopup();
+    host.reset();
+    updateAddress((window.map.logoPin.getBoundingClientRect().x), (window.map.logoPin.getBoundingClientRect().y));
+  };
+
+  /* Отоображение координат метки в графе `Адрес` */
+  const addressForm = host.querySelector(`#address`);
+  const updateAddress = (x, y) => {
+    addressForm.value = `${x}, ${y}`;
+  };
+
   window.form = {
     host,
     inputFields,
@@ -162,6 +198,7 @@
     inputCapacity,
     inputRoom,
     getFormNotActive,
-    inputsForm
+    inputsForm,
+
   };
 })();
