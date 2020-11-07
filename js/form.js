@@ -86,16 +86,16 @@
   // });
 
   /* Деактивация формы */
-  const getFormNotActive = () => {
-    const FormInputFields = host.querySelectorAll(`fieldset`);
-    for (let i = 0; i < FormInputFields.length; i++) {
-      FormInputFields[i].setAttribute(`disabled`, true);
+  const deactivateForm = () => {
+    const formInputFields = host.querySelectorAll(`fieldset`);
+    for (let i = 0; i < formInputFields.length; i++) {
+      formInputFields[i].setAttribute(`disabled`, true);
     }
     host.classList.add(`ad-form--disabled`);
     window.map.mapBooking.classList.add(`map--faded`);
     window.map.hidePopup();
     host.reset();
-    updateAddress((window.map.logoPin.getBoundingClientRect().x), (window.map.logoPin.getBoundingClientRect().y));
+    updateAddress(window.map.pinBoundingRect.x, window.map.pinBoundingRect.y);
   };
 
   /* Отоображение координат метки в графе `Адрес` */
@@ -107,7 +107,7 @@
   /* КНОПКА СБРОСА */
   const formReset = document.querySelector(`.ad-form__reset`);
   formReset.addEventListener(`click`, () => {
-    getFormNotActive();
+    deactivateForm();
   });
 
   /* ВАЛИДАЦИЯ "Тип жилья" и "Цена за ночь" */
@@ -153,9 +153,7 @@
     activateForm,
     updateAddress,
     addressForm,
-    formPriceOfHousingTypeSelect,
-    inputCapacity,
-    inputRoom,
-    getFormNotActive
+    getFormNotActive: deactivateForm,
+
   };
 })();

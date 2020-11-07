@@ -66,14 +66,15 @@
     for (let i = 0; i < allPins.length; i++) {
       allPins[i].hidden = false;
     }
-    window.map.logoPin.removeEventListener(`keydown`, window.map.onLogoPinKeyDown);
-    window.map.logoPin.removeEventListener(`mousedown`, window.map.onLogoPinMouseDown);
+    logoPin.removeEventListener(`keydown`, onLogoPinKeyDown);
+    logoPin.removeEventListener(`mousedown`, onLogoPinMouseDown);
   };
 
   /* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */
   const logoPin = document.querySelector(`.map__pin--main`);
   const MAP_PIN_SIZE = 31; // половина ширины и высоты main pin (получаем её центр);
-  window.form.updateAddress(logoPin.getBoundingClientRect().x - MAP_PIN_SIZE, logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
+  const pinBoundingRect = logoPin.getBoundingClientRect();
+  window.form.updateAddress(pinBoundingRect.x - MAP_PIN_SIZE, pinBoundingRect.y - MAP_PIN_SIZE);
   popup.hidden = true;
 
   const onLogoPinMouseDown = (evt) => {
@@ -123,18 +124,18 @@
       /* Вертикаль*/
       const UPPER_LIMIT_Y_LOGOPIN = 130;
       const LOWER_LIMIT_Y_LOGOPIN = 630;
-      if (logoPin.getBoundingClientRect().y < UPPER_LIMIT_Y_LOGOPIN) {
+      if (pinBoundingRect.y < UPPER_LIMIT_Y_LOGOPIN) {
         logoPin.style.top = `${UPPER_LIMIT_Y_LOGOPIN}px`;
-      } else if (logoPin.getBoundingClientRect().y > LOWER_LIMIT_Y_LOGOPIN) {
+      } else if (pinBoundingRect.y > LOWER_LIMIT_Y_LOGOPIN) {
         logoPin.style.top = `${LOWER_LIMIT_Y_LOGOPIN}px`;
       }
       /* Горизонталь */
       const LEFT_LIMIT_X_LOGOPIN = 41;
       const RIGTH_LIMIT_X_LOGOPIN = 1169;
 
-      if (logoPin.getBoundingClientRect().x < LEFT_LIMIT_X_LOGOPIN) {
+      if (pinBoundingRect.x < LEFT_LIMIT_X_LOGOPIN) {
         logoPin.style.left = `-${PIN_HALF_WIDTH}px`;
-      } else if (logoPin.getBoundingClientRect().x > RIGTH_LIMIT_X_LOGOPIN) {
+      } else if (pinBoundingRect.x > RIGTH_LIMIT_X_LOGOPIN) {
         logoPin.style.left = `${RIGTH_LIMIT_X_LOGOPIN}px`;
       }
     };
@@ -155,6 +156,8 @@
     onLogoPinMouseDown,
     onLogoPinKeyDown,
     mapBooking,
-    hidePopup
+    hidePopup,
+    pinBoundingRect,
+
   };
 })();
