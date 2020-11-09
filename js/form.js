@@ -85,41 +85,39 @@
   });
 
   /* ВАЛИДАЦИЯ ФОРМЫ ПРИ ОТПРАВКЕ */
-  const inputsForm = host.querySelectorAll(`input`);
   const buttonSubmit = host.querySelector(`.ad-form__submit`); // кнопка отправки формы объявлений
-  const customValidityMessageError = document.querySelector(`#error`).content;
+  const loadSuccessTemplate = document.querySelector(`#error`).content;
   const customValidityMessage = document.querySelector(`#success`).content;
 
-  const successMessage = () => {
+  const renderSuccessMessage = () => {
     const cloneValidityTemplate = customValidityMessage.cloneNode(true);
     const main = document.querySelector(`main`);
     main.prepend(cloneValidityTemplate);
     resetForm();
   };
 
-  const errorMessage = () => {
-    const cloneErrorTemplate = customValidityMessageError.cloneNode(true);
+  const renderErrorMessage = () => {
+    const cloneErrorTemplate = loadSuccessTemplate.cloneNode(true);
     const main = document.querySelector(`main`);
     main.prepend(cloneErrorTemplate);
+
+    const closeErrorMessage = () => {
+      document.querySelector(`.error`).hidden = `false`;
+      const buttonClose = cloneErrorTemplate.querySelector(`.error__button`);
+      buttonClose.addEventListener(`click`, onButtonCloseClick);
+      buttonClose.removeEventListener(`click`, onButtonCloseClick);
+      document.removeEventListener(`keydown`, onDocumentEscPress);
+    };
+
+    const onButtonCloseClick = () => closeErrorMessage();
+
+    const onDocumentEscPress = (evt) => {
+      if (evt.key === `Escape`) {
+        closeErrorMessage();
+      }
+    };
+    document.addEventListener(`keydown`, onDocumentEscPress);
   };
-
-  // const onButtonCloseClick = () => closeErrorMessage();
-
-  // const onDocumentEscPress = (evt) =>{
-  //   if (evt.key === `Escape`) {
-  //     closeErrorMessage();
-  //   }
-  // };
-  // document.addEventListener(`keydown`, onDocumentEscPress);
-
-  // const closeErrorMessage = () => {
-  //   const cloneErrorTemplate = customValidityMessageError.cloneNode(true);
-  //   document.querySelector(`.error`).hidden = `false`;
-  //   const buttonClose = cloneErrorTemplate.querySelector(`.error__button`);
-  //   buttonClose.addEventListener(`click`, onButtonCloseClick);
-  //   buttonClose.removeEventListener(`click`, onButtonCloseClick);
-  //   document.removeEventListener(`keydown`, onDocumentEscPress);
-  // };
 
   /* КНОПКА СБРОСА */
   const formReset = document.querySelector(`.ad-form__reset`);
@@ -130,44 +128,42 @@
     });
   };
 
-  buttonSubmit.addEventListener(`click`, function () {
-    const validValuePrice = Number(formPriceOfHousingTypeSelect.placeholder) <= Number(formPriceOfHousingTypeSelect.value);
-    const validValueTime = formTimeIn.value === formTimeOut.value;
-    const capacityOfTheHousing = inputCapacity.value <= inputRoom.value;
-    inputsForm.forEach((input) => {
-      input.addEventListener(`change`, () => {
-        if (validValuePrice !== true || validValueTime !== true || capacityOfTheHousing !== true) {
-          input.style.border = `2px solid red`;
-          errorMessage();
-
-          const closeErrorMessage = () => {
-            const cloneErrorTemplate = customValidityMessageError.cloneNode(true);
-            document.querySelector(`.error`).hidden = `false`;
-            const buttonClose = cloneErrorTemplate.querySelector(`.error__button`);
-            buttonClose.addEventListener(`click`, onButtonCloseClick);
-            buttonClose.removeEventListener(`click`, onButtonCloseClick);
-            document.removeEventListener(`keydown`, onDocumentEscPress);
-          };
-
-          const onButtonCloseClick = () => closeErrorMessage();
-
-          const onDocumentEscPress = (evt) => {
-            if (evt.key === `Escape`) {
-              closeErrorMessage();
-            }
-          };
-          document.addEventListener(`keydown`, onDocumentEscPress);
-
-
-          window.map.hidePopup();
-        } else {
-          host.preventDefault();
-          window.map.hidePopup();
-          successMessage();
-        }
-      });
-    });
+  /* ВАЛИДАЦИЯ ГРАФ В ФОРМЕ */
+  formPriceOfHousingTypeSelect.addEventListener(`change`, () => {
+    const isValuePriceValid = Number(formPriceOfHousingTypeSelect.placeholder) > Number(formPriceOfHousingTypeSelect.value);
+    if (isValuePriceValid) {
+      formPriceOfHousingTypeSelect.setCustomValidity(`Введите другое значение`);
+      formPriceOfHousingTypeSelect.style.border = `2px solid red`;
+    } else {
+      (formPriceOfHousingTypeSelect.setCustomValidity(``));
+      formPriceOfHousingTypeSelect.style.border = `2px solid green`;
+    }
+    const validOfFormPriceOfHousingTypeSelect = formPriceOfHousingTypeSelect.checkValidity();
   });
+
+  formTimeIn.addEventListener(`change`, () => {
+    const isValueTimeValid = formTimeIn.value !== formTimeOut.value;
+    if (isValueTimeValid) {
+      formTimeOut.style.border = `2px solid red`;
+    } else {
+      formTimeOut.style.border = `2px solid green`;
+    }
+    const validOfFormTimeOut = formTimeOut.checkValidity();
+  });
+
+  inputRoom.addEventListener(`change`, () => {
+    const isCapacityOfTheHousingValid = inputRoom.value < inputCapacity.value;
+    if (isCapacityOfTheHousingValid) {
+      inputCapacity.setCustomValidity(`Введите другое значение `);
+      inputCapacity.style.border = `2px solid red`;
+    } else {
+      inputCapacity.setCustomValidity(``);
+      inputCapacity.style.border = `2px solid green`;
+    }
+    const validOfInputRoom = inputCapacity.checkValidity(); // ФЛАГ?
+  });
+
+  // buttonSubmit.addEventListener(`click`, function () {
 
   /* Деактивация формы */
   const getFormNotActive = () => {
@@ -184,6 +180,7 @@
 
   /* Отоображение координат метки в графе `Адрес` */
   const addressForm = host.querySelector(`#address`);
+  addressForm.setAttribute(`disabled`, true);
   const updateAddress = (x, y) => {
     addressForm.value = `${x}, ${y}`;
   };
@@ -198,7 +195,7 @@
     inputCapacity,
     inputRoom,
     getFormNotActive,
-    inputsForm,
+    // inputsForm,
 
   };
 })();
