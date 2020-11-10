@@ -56,12 +56,16 @@
   };
   window.load(renderPins); // загрузка данных
 
+  const addClasstoMapBooking = () => {
+    mapBooking.classList.add(`map--faded`);
+  };
+
   /* АКТИВАЦИЯ ФОРМЫ */
   const mapBooking = document.querySelector(`.map`);
   const activateMap = () => {
     mapBooking.classList.remove(`map--faded`);
     window.map.showPopup();
-    window.form.activateForm();
+    window.form.activateTheAdCard();
     const allPins = Array.from(document.querySelectorAll(`.map__pin`));
     for (let i = 0; i < allPins.length; i++) {
       allPins[i].hidden = false;
@@ -95,9 +99,9 @@
   logoPin.addEventListener(`keydown`, onLogoPinKeyDown);
 
   /* ПЕРЕМЕЩЕНИЕ МЕТКИ */
-
   logoPin.addEventListener(`mousedown`, function (evt) {
     evt.preventDefault();
+
     let startCoords = {
       x: evt.clientX,
       y: evt.clientY
@@ -117,27 +121,35 @@
         y: moveEvt.clientY
       };
 
-      logoPin.style.top = (logoPin.offsetTop - shift.y) + `px`;
-      logoPin.style.left = (logoPin.offsetLeft - shift.x) + `px`;
-
       /* Ограничение передвижения метки */
       /* Вертикаль*/
+      logoPin.style.top = (logoPin.offsetTop - shift.y) + `px`;
+
+      const logoPinCoordinatesY = logoPin.getBoundingClientRect().y;
+
+      const arrayFromLogoPinStyle = Array.from(logoPin.style.left);
+      const logoPinCoordinatesX = arrayFromLogoPinStyle.splice(0, arrayFromLogoPinStyle.length - 2).join(``);
+
       const UPPER_LIMIT_Y_LOGOPIN = 130;
       const LOWER_LIMIT_Y_LOGOPIN = 630;
-      if (pinBoundingRect.y < UPPER_LIMIT_Y_LOGOPIN) {
+      if (logoPinCoordinatesY < UPPER_LIMIT_Y_LOGOPIN) {
         logoPin.style.top = `${UPPER_LIMIT_Y_LOGOPIN}px`;
-      } else if (pinBoundingRect.y > LOWER_LIMIT_Y_LOGOPIN) {
+      } else if (logoPinCoordinatesY > LOWER_LIMIT_Y_LOGOPIN) {
         logoPin.style.top = `${LOWER_LIMIT_Y_LOGOPIN}px`;
       }
+      logoPin.style.left = (logoPin.offsetLeft - shift.x) + `px`;
       /* Горизонталь */
-      const LEFT_LIMIT_X_LOGOPIN = 41;
+      const LEFT_LIMIT_X_LOGOPIN = -31;
       const RIGTH_LIMIT_X_LOGOPIN = 1169;
 
-      if (pinBoundingRect.x < LEFT_LIMIT_X_LOGOPIN) {
+
+      if (logoPinCoordinatesX < LEFT_LIMIT_X_LOGOPIN) {
         logoPin.style.left = `-${PIN_HALF_WIDTH}px`;
-      } else if (pinBoundingRect.x > RIGTH_LIMIT_X_LOGOPIN) {
+      } else if (logoPinCoordinatesX > RIGTH_LIMIT_X_LOGOPIN) {
         logoPin.style.left = `${RIGTH_LIMIT_X_LOGOPIN}px`;
       }
+
+
     };
     const onMouseUp = function (upEvt) {
       upEvt.preventDefault();
@@ -155,9 +167,8 @@
     showPopup,
     onLogoPinMouseDown,
     onLogoPinKeyDown,
-    mapBooking,
+    addClasstoMapBooking,
     hidePopup,
     pinBoundingRect,
-
   };
 })();
