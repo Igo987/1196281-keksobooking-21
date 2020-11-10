@@ -58,6 +58,11 @@
 
   /* АКТИВАЦИЯ ФОРМЫ */
   const mapBooking = document.querySelector(`.map`);
+
+  const deactive = () => {
+    mapBooking.classList.add(`map--faded`);
+  };
+
   const activateMap = () => {
     mapBooking.classList.remove(`map--faded`);
     window.map.showPopup();
@@ -66,8 +71,9 @@
     for (let i = 0; i < allPins.length; i++) {
       allPins[i].hidden = false;
     }
-    window.map.logoPin.removeEventListener(`keydown`, window.map.onLogoPinKeyDown);
-    window.map.logoPin.removeEventListener(`mousedown`, window.map.onLogoPinMouseDown);
+    logoPin.removeEventListener(`keydown`, window.map.onLogoPinKeyDown);
+    logoPin.removeEventListener(`mousedown`, window.map.onLogoPinMouseDown);
+    // window.form.formReset.removeEventListener(`click`, window.form.getFormNotActive);
   };
 
   /* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */
@@ -94,9 +100,9 @@
   logoPin.addEventListener(`keydown`, onLogoPinKeyDown);
 
   /* ПЕРЕМЕЩЕНИЕ МЕТКИ */
-
   logoPin.addEventListener(`mousedown`, function (evt) {
     evt.preventDefault();
+
     let startCoords = {
       x: evt.clientX,
       y: evt.clientY
@@ -116,27 +122,35 @@
         y: moveEvt.clientY
       };
 
-      logoPin.style.top = (logoPin.offsetTop - shift.y) + `px`;
-      logoPin.style.left = (logoPin.offsetLeft - shift.x) + `px`;
-
       /* Ограничение передвижения метки */
       /* Вертикаль*/
+      logoPin.style.top = (logoPin.offsetTop - shift.y) + `px`;
+
+      const logoPinCoordinatesY = logoPin.getBoundingClientRect().y;
+
+      const arrayFromLogoPinStyle = Array.from(logoPin.style.left);
+      const logoPinCoordinatesX = arrayFromLogoPinStyle.splice(0, arrayFromLogoPinStyle.length - 2).join(``);
+
       const UPPER_LIMIT_Y_LOGOPIN = 130;
       const LOWER_LIMIT_Y_LOGOPIN = 630;
-      if (logoPin.getBoundingClientRect().y < UPPER_LIMIT_Y_LOGOPIN) {
+      if (logoPinCoordinatesY < UPPER_LIMIT_Y_LOGOPIN) {
         logoPin.style.top = `${UPPER_LIMIT_Y_LOGOPIN}px`;
-      } else if (logoPin.getBoundingClientRect().y > LOWER_LIMIT_Y_LOGOPIN) {
+      } else if (logoPinCoordinatesY > LOWER_LIMIT_Y_LOGOPIN) {
         logoPin.style.top = `${LOWER_LIMIT_Y_LOGOPIN}px`;
       }
+      logoPin.style.left = (logoPin.offsetLeft - shift.x) + `px`;
       /* Горизонталь */
-      const LEFT_LIMIT_X_LOGOPIN = 41;
+      const LEFT_LIMIT_X_LOGOPIN = -31;
       const RIGTH_LIMIT_X_LOGOPIN = 1169;
 
-      if (logoPin.getBoundingClientRect().x < LEFT_LIMIT_X_LOGOPIN) {
+
+      if (logoPinCoordinatesX < LEFT_LIMIT_X_LOGOPIN) {
         logoPin.style.left = `-${PIN_HALF_WIDTH}px`;
-      } else if (logoPin.getBoundingClientRect().x > RIGTH_LIMIT_X_LOGOPIN) {
+      } else if (logoPinCoordinatesX > RIGTH_LIMIT_X_LOGOPIN) {
         logoPin.style.left = `${RIGTH_LIMIT_X_LOGOPIN}px`;
       }
+
+
     };
     const onMouseUp = function (upEvt) {
       upEvt.preventDefault();
@@ -154,7 +168,8 @@
     showPopup,
     onLogoPinMouseDown,
     onLogoPinKeyDown,
-    mapBooking,
-    hidePopup
+    deactive,
+    hidePopup,
+    activateMap,
   };
 })();

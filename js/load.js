@@ -43,13 +43,17 @@
     });
   };
 
-  window.upload = (data, onSuccess) => {
+  window.upload = (data, onSuccess, onError) => {
     const URL_POST = ` https://21.javascript.pages.academy/keksobooking`;
     const xhr = new XMLHttpRequest();
     xhr.responseType = `json`;
 
     xhr.addEventListener(`load`, () => {
       onSuccess(xhr.response);
+    });
+
+    xhr.addEventListener(`error`, () => {
+      onError(xhr.response);
     });
 
     xhr.open(`POST`, URL_POST);

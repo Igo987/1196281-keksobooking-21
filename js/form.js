@@ -84,51 +84,64 @@
     formPriceOfHousingTypeSelect.setAttribute(`min`, price);
   });
 
-  /* ВАЛИДАЦИЯ ФОРМЫ ПРИ ОТПРАВКЕ */
+
+  /* Деактивация формы */
+  const getFormNotActive = () => {
+    document.querySelectorAll(`.map__pin[type='button']`).forEach((el) => (el.hidden = `true`));
+    const FormInputFields = host.querySelectorAll(`fieldset`);
+    for (let i = 0; i < FormInputFields.length; i++) {
+      FormInputFields[i].setAttribute(`disabled`, true);
+    }
+    host.classList.add(`ad-form--disabled`);
+    window.map.deactive();
+    window.map.hidePopup();
+    host.reset();
+    updateAddress((window.map.logoPin.getBoundingClientRect().x), (window.map.logoPin.getBoundingClientRect().y));
+    window.map.logoPin.addEventListener(`mousedown`, window.map.onLogoPinMouseDown);
+    window.map.logoPin.addEventListener(`keydown`, window.map.onLogoPinKeyDown);
+  };
+  // /* ВАЛИДАЦИЯ ФОРМЫ ПРИ ОТПРАВКЕ */
   const buttonSubmit = host.querySelector(`.ad-form__submit`); // кнопка отправки формы объявлений
-  const loadSuccessTemplate = document.querySelector(`#error`).content;
-  const customValidityMessage = document.querySelector(`#success`).content;
+  // const loadSuccessTemplate = document.querySelector(`#error`).content;
+  // const customValidityMessage = document.querySelector(`#success`).content;
 
-  const renderSuccessMessage = () => {
-    const cloneValidityTemplate = customValidityMessage.cloneNode(true);
-    const main = document.querySelector(`main`);
-    main.prepend(cloneValidityTemplate);
-    resetForm();
-  };
+  // const renderSuccessMessage = () => {
+  //   const cloneValidityTemplate = customValidityMessage.cloneNode(true);
+  //   const main = document.querySelector(`main`);
+  //   main.prepend(cloneValidityTemplate);
+  //   resetForm();
+  // };
 
-  const renderErrorMessage = () => {
-    const cloneErrorTemplate = loadSuccessTemplate.cloneNode(true);
-    const main = document.querySelector(`main`);
-    main.prepend(cloneErrorTemplate);
+  // const renderErrorMessage = () => {
+  //   const cloneErrorTemplate = loadSuccessTemplate.cloneNode(true);
+  //   const main = document.querySelector(`main`);
+  //   main.prepend(cloneErrorTemplate);
 
-    const closeErrorMessage = () => {
-      document.querySelector(`.error`).hidden = `false`;
-      const buttonClose = cloneErrorTemplate.querySelector(`.error__button`);
-      buttonClose.addEventListener(`click`, onButtonCloseClick);
-      buttonClose.removeEventListener(`click`, onButtonCloseClick);
-      document.removeEventListener(`keydown`, onDocumentEscPress);
-    };
+  // const closeErrorMessage = () => {
+  //   document.querySelector(`.error`).hidden = `false`;
+  //   const buttonClose = cloneErrorTemplate.querySelector(`.error__button`);
+  //   buttonClose.addEventListener(`click`, onButtonCloseClick);
+  //   buttonClose.removeEventListener(`click`, onButtonCloseClick);
+  //   document.removeEventListener(`keydown`, onDocumentEscPress);
+  // };
 
-    const onButtonCloseClick = () => closeErrorMessage();
+  //   const onButtonCloseClick = () => closeErrorMessage();
 
-    const onDocumentEscPress = (evt) => {
-      if (evt.key === `Escape`) {
-        closeErrorMessage();
-      }
-    };
-    document.addEventListener(`keydown`, onDocumentEscPress);
-  };
+  //   const onDocumentEscPress = (evt) => {
+  //     if (evt.key === `Escape`) {
+  //       closeErrorMessage();
+  //     }
+  //   };
+  //   document.addEventListener(`keydown`, onDocumentEscPress);
+  // };
 
   /* КНОПКА СБРОСА */
   const formReset = document.querySelector(`.ad-form__reset`);
-  const resetForm = () => {
-    formReset.addEventListener(`click`, () => {
-      host.reset();
-      updateAddress((window.map.logoPin.getBoundingClientRect().x), (window.map.logoPin.getBoundingClientRect().y));
-    });
-  };
+  formReset.addEventListener(`click`, getFormNotActive);
+
 
   /* ВАЛИДАЦИЯ ГРАФ В ФОРМЕ */
+
   formPriceOfHousingTypeSelect.addEventListener(`change`, () => {
     const isValuePriceValid = Number(formPriceOfHousingTypeSelect.placeholder) > Number(formPriceOfHousingTypeSelect.value);
     if (isValuePriceValid) {
@@ -138,8 +151,9 @@
       (formPriceOfHousingTypeSelect.setCustomValidity(``));
       formPriceOfHousingTypeSelect.style.border = `2px solid green`;
     }
-    const validOfFormPriceOfHousingTypeSelect = formPriceOfHousingTypeSelect.checkValidity();
+    formPriceOfHousingTypeSelect.checkValidity();
   });
+
 
   formTimeIn.addEventListener(`change`, () => {
     const isValueTimeValid = formTimeIn.value !== formTimeOut.value;
@@ -148,7 +162,7 @@
     } else {
       formTimeOut.style.border = `2px solid green`;
     }
-    const validOfFormTimeOut = formTimeOut.checkValidity();
+    formTimeOut.checkValidity();
   });
 
   inputRoom.addEventListener(`change`, () => {
@@ -160,23 +174,20 @@
       inputCapacity.setCustomValidity(``);
       inputCapacity.style.border = `2px solid green`;
     }
-    const validOfInputRoom = inputCapacity.checkValidity(); // ФЛАГ?
+    isCapacityOfTheHousingValid.checkValidity(); // ФЛАГ
   });
 
-  // buttonSubmit.addEventListener(`click`, function () {
+  let massiveInputsForm = [formPriceOfHousingTypeSelect, formTimeIn, inputRoom];
 
-  /* Деактивация формы */
-  const getFormNotActive = () => {
-    const FormInputFields = host.querySelectorAll(`fieldset`);
-    for (let i = 0; i < FormInputFields.length; i++) {
-      FormInputFields[i].setAttribute(`disabled`, true);
-    }
-    host.classList.add(`ad-form--disabled`);
-    window.map.mapBooking.classList.add(`map--faded`);
-    window.map.hidePopup();
-    host.reset();
-    updateAddress((window.map.logoPin.getBoundingClientRect().x), (window.map.logoPin.getBoundingClientRect().y));
-  };
+  // host.addEventListener(`submit`, function (evt) {
+
+  //   // if (massiveInputsForm.map((el) => el.checkValidity()).some((item) => (item === false))) {
+
+  //   // }
+
+
+  // });
+
 
   /* Отоображение координат метки в графе `Адрес` */
   const addressForm = host.querySelector(`#address`);
@@ -195,7 +206,8 @@
     inputCapacity,
     inputRoom,
     getFormNotActive,
-    // inputsForm,
+    formReset,
+    massiveInputsForm
 
   };
 })();
