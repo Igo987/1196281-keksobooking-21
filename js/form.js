@@ -39,7 +39,7 @@
     inputFields[i].setAttribute(`disabled`, true);
   }
 
-  const activateForm = () => {
+  const bringingToTheActiveState = () => {
     host.classList.remove(`ad-form--disabled`);
     for (let i = 0; i < inputFields.length; i++) {
       inputFields[i].removeAttribute(`disabled`);
@@ -48,7 +48,7 @@
 
   /* ВАЛИДАЦИЯ "Тип жилья" и "Цена за ночь" */
   const formHousingTypeSelect = host.querySelector(`#type`);
-  const formPriceOfHousingTypeSelect = host.querySelector(`#price`);
+  const PriceOfHousingTypeSelect = host.querySelector(`#price`);
 
   const HOUSING_TYPE = {
     flat: `flat`,
@@ -80,13 +80,13 @@
         price = PRICE.house;
         break;
     }
-    formPriceOfHousingTypeSelect.placeholder = price;
-    formPriceOfHousingTypeSelect.setAttribute(`min`, price);
+    PriceOfHousingTypeSelect.placeholder = price;
+    PriceOfHousingTypeSelect.setAttribute(`min`, price);
   });
 
 
   /* Деактивация формы */
-  const getFormNotActive = () => {
+  const toEnableADisabledState = () => {
     document.querySelectorAll(`.map__pin[type='button']`).forEach((el) => (el.hidden = `true`));
     const FormInputFields = host.querySelectorAll(`fieldset`);
     for (let i = 0; i < FormInputFields.length; i++) {
@@ -100,58 +100,74 @@
     window.map.logoPin.addEventListener(`mousedown`, window.map.onLogoPinMouseDown);
     window.map.logoPin.addEventListener(`keydown`, window.map.onLogoPinKeyDown);
   };
-  // /* ВАЛИДАЦИЯ ФОРМЫ ПРИ ОТПРАВКЕ */
-  const buttonSubmit = host.querySelector(`.ad-form__submit`); // кнопка отправки формы объявлений
-  // const loadSuccessTemplate = document.querySelector(`#error`).content;
-  // const customValidityMessage = document.querySelector(`#success`).content;
 
-  // const renderSuccessMessage = () => {
-  //   const cloneValidityTemplate = customValidityMessage.cloneNode(true);
-  //   const main = document.querySelector(`main`);
-  //   main.prepend(cloneValidityTemplate);
-  //   resetForm();
-  // };
+  // /* СООБЩЕНИЯ О РЕЗУЛЬТАТАХ ОТПРАВКИ ДАННЫХ*/
+  // const buttonSubmit = host.querySelector(`.ad-form__submit`); // кнопка отправки формы объявлений
+  const loadErrorTemplate = document.querySelector(`#error`).content;
+  const customValidityMessage = document.querySelector(`#success`).content;
 
-  // const renderErrorMessage = () => {
-  //   const cloneErrorTemplate = loadSuccessTemplate.cloneNode(true);
-  //   const main = document.querySelector(`main`);
-  //   main.prepend(cloneErrorTemplate);
+  const loadSuccessTemplate = () => {
+    const cloneValidityTemplate = customValidityMessage.cloneNode(true);
+    const main = document.querySelector(`main`);
+    main.prepend(cloneValidityTemplate);
 
-  // const closeErrorMessage = () => {
-  //   document.querySelector(`.error`).hidden = `false`;
-  //   const buttonClose = cloneErrorTemplate.querySelector(`.error__button`);
-  //   buttonClose.addEventListener(`click`, onButtonCloseClick);
-  //   buttonClose.removeEventListener(`click`, onButtonCloseClick);
-  //   document.removeEventListener(`keydown`, onDocumentEscPress);
-  // };
+    const closeTemplate = (evt) => {
+      if ((evt.key === `Escape`) || (evt.which === 1)) {
+        toEnableADisabledState();
+        closeLoadSuccessTemplate();
+        massiveInputs.forEach((el) => (el.style.border = ``));
+      }
+    };
 
-  //   const onButtonCloseClick = () => closeErrorMessage();
+    const closeLoadSuccessTemplate = () => {
+      document.querySelector(`.success`).hidden = `true`;
+      document.removeEventListener(`click`, closeTemplate);
+      document.removeEventListener(`keydown`, closeTemplate);
+    };
 
-  //   const onDocumentEscPress = (evt) => {
-  //     if (evt.key === `Escape`) {
-  //       closeErrorMessage();
-  //     }
-  //   };
-  //   document.addEventListener(`keydown`, onDocumentEscPress);
-  // };
+    document.addEventListener(`click`, closeTemplate);
+    document.addEventListener(`keydown`, closeTemplate);
+  };
 
+  const errorTemplate = () => {
+    const cloneErrorTemplate = loadErrorTemplate.cloneNode(true);
+    const main = document.querySelector(`main`);
+    main.prepend(cloneErrorTemplate);
+    const buttonCloseErrorTemplate = document.querySelector(`.error__button`);
+
+    const closeLoadErrorTemplate = () => {
+      document.querySelector(`.error`).hidden = `true`;
+      document.removeEventListener(`keydown`, onDocumentEscPress);
+      buttonCloseErrorTemplate.removeEventListener(`click`, onButtonCloseClick);
+    };
+
+    const onButtonCloseClick = () => closeLoadErrorTemplate();
+
+
+    const onDocumentEscPress = (evt) => {
+      if ((evt.key === `Escape`) || (evt.which === 1)) {
+        closeLoadErrorTemplate();
+      }
+    };
+    document.addEventListener(`keydown`, onDocumentEscPress);
+    buttonCloseErrorTemplate.addEventListener(`click`, onButtonCloseClick);
+
+  };
   /* КНОПКА СБРОСА */
   const formReset = document.querySelector(`.ad-form__reset`);
-  formReset.addEventListener(`click`, getFormNotActive);
-
+  formReset.addEventListener(`click`, toEnableADisabledState);
 
   /* ВАЛИДАЦИЯ ГРАФ В ФОРМЕ */
-
-  formPriceOfHousingTypeSelect.addEventListener(`change`, () => {
-    const isValuePriceValid = Number(formPriceOfHousingTypeSelect.placeholder) > Number(formPriceOfHousingTypeSelect.value);
+  PriceOfHousingTypeSelect.addEventListener(`change`, () => {
+    const isValuePriceValid = Number(PriceOfHousingTypeSelect.placeholder) > Number(PriceOfHousingTypeSelect.value);
     if (isValuePriceValid) {
-      formPriceOfHousingTypeSelect.setCustomValidity(`Введите другое значение`);
-      formPriceOfHousingTypeSelect.style.border = `2px solid red`;
+      PriceOfHousingTypeSelect.setCustomValidity(`Введите другое значение`);
+      PriceOfHousingTypeSelect.style.border = `2px solid red`;
     } else {
-      (formPriceOfHousingTypeSelect.setCustomValidity(``));
-      formPriceOfHousingTypeSelect.style.border = `2px solid green`;
+      (PriceOfHousingTypeSelect.setCustomValidity(``));
+      PriceOfHousingTypeSelect.style.border = `2px solid green`;
     }
-    formPriceOfHousingTypeSelect.checkValidity();
+    PriceOfHousingTypeSelect.checkValidity();
   });
 
 
@@ -165,6 +181,14 @@
     formTimeOut.checkValidity();
   });
 
+  /* Отоображение координат метки в графе `Адрес` */
+  const addressForm = host.querySelector(`#address`);
+  const updateAddress = (x, y) => {
+    addressForm.value = `${x}, ${y}`;
+    addressForm.setAttribute(`readonly`, true);
+
+  };
+
   inputRoom.addEventListener(`change`, () => {
     const isCapacityOfTheHousingValid = inputRoom.value < inputCapacity.value;
     if (isCapacityOfTheHousingValid) {
@@ -174,40 +198,27 @@
       inputCapacity.setCustomValidity(``);
       inputCapacity.style.border = `2px solid green`;
     }
-    isCapacityOfTheHousingValid.checkValidity(); // ФЛАГ
+    inputCapacity.checkValidity();
   });
 
-  let massiveInputsForm = [formPriceOfHousingTypeSelect, formTimeIn, inputRoom];
+  let massiveInputs = [PriceOfHousingTypeSelect, formTimeOut, inputCapacity];
 
-  // host.addEventListener(`submit`, function (evt) {
-
-  //   // if (massiveInputsForm.map((el) => el.checkValidity()).some((item) => (item === false))) {
-
-  //   // }
-
-
-  // });
-
-
-  /* Отоображение координат метки в графе `Адрес` */
-  const addressForm = host.querySelector(`#address`);
-  addressForm.setAttribute(`disabled`, true);
-  const updateAddress = (x, y) => {
-    addressForm.value = `${x}, ${y}`;
-  };
+  host.addEventListener(`submit`, function (evt) {
+    window.upload(new FormData(host), loadSuccessTemplate, errorTemplate);
+    evt.preventDefault();
+  });
 
   window.form = {
     host,
     inputFields,
-    activateForm,
+    bringingToTheActiveState,
     updateAddress,
     addressForm,
-    formPriceOfHousingTypeSelect,
+    PriceOfHousingTypeSelect,
     inputCapacity,
     inputRoom,
-    getFormNotActive,
+    toEnableADisabledState,
     formReset,
-    massiveInputsForm
-
+    massiveInputs,
   };
 })();

@@ -66,14 +66,13 @@
   const activateMap = () => {
     mapBooking.classList.remove(`map--faded`);
     window.map.showPopup();
-    window.form.activateForm();
+    window.form.bringingToTheActiveState();
     const allPins = Array.from(document.querySelectorAll(`.map__pin`));
     for (let i = 0; i < allPins.length; i++) {
       allPins[i].hidden = false;
     }
     logoPin.removeEventListener(`keydown`, window.map.onLogoPinKeyDown);
     logoPin.removeEventListener(`mousedown`, window.map.onLogoPinMouseDown);
-    // window.form.formReset.removeEventListener(`click`, window.form.getFormNotActive);
   };
 
   /* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */
