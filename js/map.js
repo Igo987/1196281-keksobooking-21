@@ -59,14 +59,14 @@
   /* АКТИВАЦИЯ ФОРМЫ */
   const mapBooking = document.querySelector(`.map`);
 
-  const deactive = () => {
+  const fadeMap = () => {
     mapBooking.classList.add(`map--faded`);
   };
 
   const activateMap = () => {
     mapBooking.classList.remove(`map--faded`);
     window.map.showPopup();
-    window.form.bringingToTheActiveState();
+    window.form.activateForm();
     const allPins = Array.from(document.querySelectorAll(`.map__pin`));
     for (let i = 0; i < allPins.length; i++) {
       allPins[i].hidden = false;
@@ -167,7 +167,7 @@
     showPopup,
     onLogoPinMouseDown,
     onLogoPinKeyDown,
-    deactive,
+    deactive: fadeMap,
     hidePopup,
     activateMap,
   };
