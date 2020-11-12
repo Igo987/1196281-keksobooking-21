@@ -45,10 +45,11 @@
       inputFields[i].removeAttribute(`disabled`);
     }
   };
-  const addressMapPin = document.querySelector(`#address`);
+  const addressMapPin = host.querySelector(`#address`);
+  addressMapPin.setAttribute(`readonly`, true);
   const updateAddress = (x, y) => {
-    addressMapPin.value = (`${x}, ${y}`);
-    addressMapPin.setAttribute(`readonly`, true);
+    addressMapPin.value = `${x}, ${y}`;
+
   };
 
   /* ВАЛИДАЦИЯ "Тип жилья" и "Цена за ночь" */

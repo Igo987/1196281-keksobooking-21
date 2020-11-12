@@ -56,7 +56,7 @@
   };
   window.load(renderPins); // загрузка данных
 
-  const addClasstoMapBooking = () => {
+  const fadeMap = () => {
     mapBooking.classList.add(`map--faded`);
   };
 
@@ -123,34 +123,35 @@
 
       /* Ограничение передвижения метки */
       /* Вертикаль*/
-      logoPin.style.top = (logoPin.offsetTop - shift.y) + `px`;
 
-      const logoPinCoordinatesY = logoPin.getBoundingClientRect().y;
+      const logoPinStyleX = logoPin.style.left;
+      const logoPinStyleY = logoPin.style.top;
 
-      const arrayFromLogoPinStyle = Array.from(logoPin.style.left);
-      const logoPinCoordinatesX = arrayFromLogoPinStyle.splice(0, arrayFromLogoPinStyle.length - 2).join(``);
+      let logoPinCoordinatesX = Number(logoPinStyleX.slice(0, -2)) - shift.x;
+      let logoPinCoordinatesY = Number(logoPinStyleY.slice(0, -2)) - shift.y;
 
       const UPPER_LIMIT_Y_LOGOPIN = 130;
       const LOWER_LIMIT_Y_LOGOPIN = 630;
       if (logoPinCoordinatesY < UPPER_LIMIT_Y_LOGOPIN) {
-        logoPin.style.top = `${UPPER_LIMIT_Y_LOGOPIN}px`;
+        logoPinCoordinatesY = `${UPPER_LIMIT_Y_LOGOPIN}px`;
       } else if (logoPinCoordinatesY > LOWER_LIMIT_Y_LOGOPIN) {
-        logoPin.style.top = `${LOWER_LIMIT_Y_LOGOPIN}px`;
+        logoPinCoordinatesY = `${LOWER_LIMIT_Y_LOGOPIN}px`;
       }
-      logoPin.style.left = (logoPin.offsetLeft - shift.x) + `px`;
+      logoPin.style.top = `${logoPinCoordinatesY}px`;
       /* Горизонталь */
       const LEFT_LIMIT_X_LOGOPIN = -31;
       const RIGTH_LIMIT_X_LOGOPIN = 1169;
 
-
       if (logoPinCoordinatesX < LEFT_LIMIT_X_LOGOPIN) {
-        logoPin.style.left = `-${PIN_HALF_WIDTH}px`;
+        logoPinCoordinatesX = LEFT_LIMIT_X_LOGOPIN;
+
       } else if (logoPinCoordinatesX > RIGTH_LIMIT_X_LOGOPIN) {
-        logoPin.style.left = `${RIGTH_LIMIT_X_LOGOPIN}px`;
+        logoPinCoordinatesX = RIGTH_LIMIT_X_LOGOPIN;
       }
 
-
+      logoPin.style.left = `${logoPinCoordinatesX}px`;
     };
+
     const onMouseUp = function (upEvt) {
       upEvt.preventDefault();
       document.removeEventListener(`mousemove`, onMouseMove);
@@ -167,8 +168,7 @@
     showPopup,
     onLogoPinMouseDown,
     onLogoPinKeyDown,
-    addClasstoMapBooking,
+    addClasstoMapBooking: fadeMap,
     hidePopup,
-    pinBoundingRect,
   };
 })();
