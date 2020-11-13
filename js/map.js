@@ -54,27 +54,31 @@
       mapPin.hidden = true;
     });
   };
-  window.load(renderPins); // пока без второго параметра
+  window.load(renderPins); // загрузка данных
+
+  const fadeMap = () => {
+    mapBooking.classList.add(`map--faded`);
+  };
 
   /* АКТИВАЦИЯ ФОРМЫ */
   const mapBooking = document.querySelector(`.map`);
   const activateMap = () => {
     mapBooking.classList.remove(`map--faded`);
     window.map.showPopup();
-    window.form.activateForm();
+    window.form.activateTheAdCard();
     const allPins = Array.from(document.querySelectorAll(`.map__pin`));
     for (let i = 0; i < allPins.length; i++) {
       allPins[i].hidden = false;
     }
-    window.map.logoPin.removeEventListener(`keydown`, window.map.onLogoPinKeyDown);
-    window.map.logoPin.removeEventListener(`mousedown`, window.map.onLogoPinMouseDown);
+    logoPin.removeEventListener(`keydown`, onLogoPinKeyDown);
+    logoPin.removeEventListener(`mousedown`, onLogoPinMouseDown);
   };
 
   /* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */
   const logoPin = document.querySelector(`.map__pin--main`);
-  // const addressForm = window.form.host.querySelector(`#address`);
   const MAP_PIN_SIZE = 31; // половина ширины и высоты main pin (получаем её центр);
-  window.form.updateAddress((logoPin.getBoundingClientRect().x - MAP_PIN_SIZE), (logoPin.getBoundingClientRect().y - MAP_PIN_SIZE));
+  const pinBoundingRect = logoPin.getBoundingClientRect();
+  window.form.updateAddress(pinBoundingRect.x - MAP_PIN_SIZE, pinBoundingRect.y - MAP_PIN_SIZE);
   popup.hidden = true;
 
   const onLogoPinMouseDown = (evt) => {
@@ -95,9 +99,9 @@
   logoPin.addEventListener(`keydown`, onLogoPinKeyDown);
 
   /* ПЕРЕМЕЩЕНИЕ МЕТКИ */
-
   logoPin.addEventListener(`mousedown`, function (evt) {
     evt.preventDefault();
+
     let startCoords = {
       x: evt.clientX,
       y: evt.clientY
@@ -117,28 +121,37 @@
         y: moveEvt.clientY
       };
 
-      logoPin.style.top = (logoPin.offsetTop - shift.y) + `px`;
-      logoPin.style.left = (logoPin.offsetLeft - shift.x) + `px`;
+      /* Ограничение передвижения метки */
+      /* Вертикаль*/
 
-      // const UPPER_LIMIT_Y_LOGOPIN = `130px`;
-      // const LOWER_LIMIT_Y_LOGOPIN = `630px`;
-      // if (logoPin.style.top < UPPER_LIMIT_Y_LOGOPIN) {
-      //   logoPin.style.top = UPPER_LIMIT_Y_LOGOPIN;
-      // }
-      // if (logoPin.style.top > LOWER_LIMIT_Y_LOGOPIN) {
-      //   logoPin.style.top = LOWER_LIMIT_Y_LOGOPIN;
-      // }
-      // let CoordinatesOfThePin = window.map.logoPin.style.left.split(``);
-      // let NumberOfCoordinatesOfThePin = CoordinatesOfThePin.slice(0, CoordinatesOfThePin.length - 2).join(``);
-      // const LEFT_LIMIT_X_LOGOPIN = -31; // ТЗ: Значение X-координаты адреса должно быть ограничено размерами блока, в котором перемещается метка. Размер блока 1200px;
-      // const RIGTH_LIMIT_X_LOGOPIN = 1169; // 1200 - 31 (PIN_HALF_WIDTH).
-      // if (NumberOfCoordinatesOfThePin < LEFT_LIMIT_X_LOGOPIN) {
-      //   logoPin.style.left = `${LEFT_LIMIT_X_LOGOPIN}px`;
-      // }
-      // if (NumberOfCoordinatesOfThePin > RIGTH_LIMIT_X_LOGOPIN) {
-      //   logoPin.style.left = `${RIGTH_LIMIT_X_LOGOPIN}px`;
-      // }
+      const logoPinStyleX = logoPin.style.left;
+      const logoPinStyleY = logoPin.style.top;
+
+      let logoPinCoordinatesX = Number(logoPinStyleX.slice(0, -2)) - shift.x;
+      let logoPinCoordinatesY = Number(logoPinStyleY.slice(0, -2)) - shift.y;
+
+      const UPPER_LIMIT_Y_LOGOPIN = 130;
+      const LOWER_LIMIT_Y_LOGOPIN = 630;
+      if (logoPinCoordinatesY < UPPER_LIMIT_Y_LOGOPIN) {
+        logoPinCoordinatesY = `${UPPER_LIMIT_Y_LOGOPIN}px`;
+      } else if (logoPinCoordinatesY > LOWER_LIMIT_Y_LOGOPIN) {
+        logoPinCoordinatesY = `${LOWER_LIMIT_Y_LOGOPIN}px`;
+      }
+      logoPin.style.top = `${logoPinCoordinatesY}px`;
+      /* Горизонталь */
+      const LEFT_LIMIT_X_LOGOPIN = -31;
+      const RIGTH_LIMIT_X_LOGOPIN = 1169;
+
+      if (logoPinCoordinatesX < LEFT_LIMIT_X_LOGOPIN) {
+        logoPinCoordinatesX = LEFT_LIMIT_X_LOGOPIN;
+
+      } else if (logoPinCoordinatesX > RIGTH_LIMIT_X_LOGOPIN) {
+        logoPinCoordinatesX = RIGTH_LIMIT_X_LOGOPIN;
+      }
+
+      logoPin.style.left = `${logoPinCoordinatesX}px`;
     };
+
     const onMouseUp = function (upEvt) {
       upEvt.preventDefault();
       document.removeEventListener(`mousemove`, onMouseMove);
@@ -155,5 +168,7 @@
     showPopup,
     onLogoPinMouseDown,
     onLogoPinKeyDown,
+    addClasstoMapBooking: fadeMap,
+    hidePopup,
   };
 })();

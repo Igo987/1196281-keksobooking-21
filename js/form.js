@@ -39,17 +39,17 @@
     inputFields[i].setAttribute(`disabled`, true);
   }
 
-  const activateForm = () => {
+  const activateTheAdCard = () => {
     host.classList.remove(`ad-form--disabled`);
     for (let i = 0; i < inputFields.length; i++) {
       inputFields[i].removeAttribute(`disabled`);
     }
   };
-
-  /* Отоображение координат метки в графе `Адрес` */
-  const addressForm = host.querySelector(`#address`);
+  const addressMapPin = host.querySelector(`#address`);
+  addressMapPin.setAttribute(`readonly`, true);
   const updateAddress = (x, y) => {
-    addressForm.value = `${x}, ${y}`;
+    addressMapPin.value = `${x}, ${y}`;
+
   };
 
   /* ВАЛИДАЦИЯ "Тип жилья" и "Цена за ночь" */
@@ -92,9 +92,7 @@
   window.form = {
     host,
     inputFields,
-    activateForm,
+    activateTheAdCard,
     updateAddress,
-    addressForm,
-
   };
 })();
