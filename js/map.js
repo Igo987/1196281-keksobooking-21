@@ -60,18 +60,24 @@
     renderPins(objects);
   };
 
-
   const filterHousingType = (evt) => {
     let selectedСategory = [];
+    let MAX_LENGTH = 5;
     for (let i = 0; i < objects.length; i++) {
       if (objects[i].offer.type === evt.currentTarget.value) {
         selectedСategory.push(objects[i]);
+        if (selectedСategory.length <= MAX_LENGTH) {
+          document.querySelectorAll(`.map__pin[type='button']`).forEach((el) => (el.remove()));
+          renderPins(selectedСategory);
+        } else {
+          let maxLength = selectedСategory.slice(0, MAX_LENGTH);
+          renderPins(maxLength);
+        }
+      } else if (evt.currentTarget.value === `any`) {
+        renderPins(objects);
       }
     }
-    document.querySelectorAll(`.map__pin[type='button']`).forEach((el) => (el.remove()));
-    renderPins(selectedСategory);
   };
-
 
   const selectHousingType = document.querySelector(`#housing-type`); // Тип жилья
   // const selectHousingPrice = document.querySelector(`#housing-price`);
@@ -91,19 +97,16 @@
     window.load(onLoad);
     mapBooking.classList.remove(`map--faded`);
     window.map.showPopup();
-    window.form.activateForm();
-    // const allPins = Array.from(document.querySelectorAll(`.map__pin`));
-    // for (let i = 0; i < allPins.length; i++) {
-    //   allPins[i].hidden = false;
-    // }
-    logoPin.removeEventListener(`keydown`, window.map.onLogoPinKeyDown);
-    logoPin.removeEventListener(`mousedown`, window.map.onLogoPinMouseDown);
+    window.form.activateTheAdCard();
+    logoPin.removeEventListener(`keydown`, onLogoPinKeyDown);
+    logoPin.removeEventListener(`mousedown`, onLogoPinMouseDown);
   };
 
   /* АКТИВАЦИЯ ФОРМЫ ПО ENTER И MOUSEDOWN */
   const logoPin = document.querySelector(`.map__pin--main`);
   const MAP_PIN_SIZE = 31; // половина ширины и высоты main pin (получаем её центр);
-  window.form.updateAddress(logoPin.getBoundingClientRect().x - MAP_PIN_SIZE, logoPin.getBoundingClientRect().y - MAP_PIN_SIZE);
+  const pinBoundingRect = logoPin.getBoundingClientRect();
+  window.form.updateAddress(pinBoundingRect.x - MAP_PIN_SIZE, pinBoundingRect.y - MAP_PIN_SIZE);
   popup.hidden = true;
 
   const onLogoPinMouseDown = (evt) => {
@@ -148,34 +151,35 @@
 
       /* Ограничение передвижения метки */
       /* Вертикаль*/
-      logoPin.style.top = (logoPin.offsetTop - shift.y) + `px`;
 
-      const logoPinCoordinatesY = logoPin.getBoundingClientRect().y;
+      const logoPinStyleX = logoPin.style.left;
+      const logoPinStyleY = logoPin.style.top;
 
-      const arrayFromLogoPinStyle = Array.from(logoPin.style.left);
-      const logoPinCoordinatesX = arrayFromLogoPinStyle.splice(0, arrayFromLogoPinStyle.length - 2).join(``);
+      let logoPinCoordinatesX = Number(logoPinStyleX.slice(0, -2)) - shift.x;
+      let logoPinCoordinatesY = Number(logoPinStyleY.slice(0, -2)) - shift.y;
 
       const UPPER_LIMIT_Y_LOGOPIN = 130;
       const LOWER_LIMIT_Y_LOGOPIN = 630;
       if (logoPinCoordinatesY < UPPER_LIMIT_Y_LOGOPIN) {
-        logoPin.style.top = `${UPPER_LIMIT_Y_LOGOPIN}px`;
+        logoPinCoordinatesY = `${UPPER_LIMIT_Y_LOGOPIN}px`;
       } else if (logoPinCoordinatesY > LOWER_LIMIT_Y_LOGOPIN) {
-        logoPin.style.top = `${LOWER_LIMIT_Y_LOGOPIN}px`;
+        logoPinCoordinatesY = `${LOWER_LIMIT_Y_LOGOPIN}px`;
       }
-      logoPin.style.left = (logoPin.offsetLeft - shift.x) + `px`;
+      logoPin.style.top = `${logoPinCoordinatesY}px`;
       /* Горизонталь */
       const LEFT_LIMIT_X_LOGOPIN = -31;
       const RIGTH_LIMIT_X_LOGOPIN = 1169;
 
-
       if (logoPinCoordinatesX < LEFT_LIMIT_X_LOGOPIN) {
-        logoPin.style.left = `-${PIN_HALF_WIDTH}px`;
+        logoPinCoordinatesX = LEFT_LIMIT_X_LOGOPIN;
+
       } else if (logoPinCoordinatesX > RIGTH_LIMIT_X_LOGOPIN) {
-        logoPin.style.left = `${RIGTH_LIMIT_X_LOGOPIN}px`;
+        logoPinCoordinatesX = RIGTH_LIMIT_X_LOGOPIN;
       }
 
-
+      logoPin.style.left = `${logoPinCoordinatesX}px`;
     };
+
     const onMouseUp = function (upEvt) {
       upEvt.preventDefault();
       document.removeEventListener(`mousemove`, onMouseMove);

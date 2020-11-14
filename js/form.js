@@ -39,7 +39,7 @@
     inputFields[i].setAttribute(`disabled`, true);
   }
 
-  const activateForm = () => {
+  const activateTheAdCard = () => {
     host.classList.remove(`ad-form--disabled`);
     for (let i = 0; i < inputFields.length; i++) {
       inputFields[i].removeAttribute(`disabled`);
@@ -88,9 +88,9 @@
   /* Деактивация формы */
   const deactivateForm = () => {
     document.querySelectorAll(`.map__pin[type='button']`).forEach((el) => (el.hidden = `true`));
-    const FormInputFields = host.querySelectorAll(`fieldset`);
-    for (let i = 0; i < FormInputFields.length; i++) {
-      FormInputFields[i].setAttribute(`disabled`, true);
+    const formInputFields = host.querySelectorAll(`fieldset`);
+    for (let i = 0; i < formInputFields.length; i++) {
+      formInputFields[i].setAttribute(`disabled`, true);
     }
     host.classList.add(`ad-form--disabled`);
     window.map.deactive();
@@ -204,14 +204,10 @@
     evt.preventDefault();
   });
 
-  // const selectHousingPrice = document.querySelector(`#housing-price`);
-  // const selectHousingRooms = document.querySelector(`#housing-rooms`);
-  // const selectHousinGuests = document.querySelector(`#housing-guests`);
-
   window.form = {
     host,
     inputFields,
-    activateForm,
+    activateTheAdCard,
     updateAddress,
     addressForm,
   };
