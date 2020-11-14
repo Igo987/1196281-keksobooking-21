@@ -51,10 +51,34 @@
         showPopup();
       });
       mapPins.after(pinsContainer);
-      mapPin.hidden = true;
     });
   };
-  window.load(renderPins); // загрузка данных
+
+  let objects = [];
+  const onLoad = (data) => {
+    objects = data;
+    renderPins(objects);
+  };
+
+
+  const filterHousingType = (evt) => {
+    let selectedСategory = [];
+    for (let i = 0; i < objects.length; i++) {
+      if (objects[i].offer.type === evt.currentTarget.value) {
+        selectedСategory.push(objects[i]);
+      }
+    }
+    document.querySelectorAll(`.map__pin[type='button']`).forEach((el) => (el.remove()));
+    renderPins(selectedСategory);
+  };
+
+
+  const selectHousingType = document.querySelector(`#housing-type`); // Тип жилья
+  // const selectHousingPrice = document.querySelector(`#housing-price`);
+  // const selectHousingRooms = document.querySelector(`#housing-rooms`);
+  // const selectHousinGuests = document.querySelector(`#housing-guests`);
+
+  selectHousingType.addEventListener(`change`, filterHousingType);
 
   /* АКТИВАЦИЯ ФОРМЫ */
   const mapBooking = document.querySelector(`.map`);
@@ -64,13 +88,14 @@
   };
 
   const activateMap = () => {
+    window.load(onLoad);
     mapBooking.classList.remove(`map--faded`);
     window.map.showPopup();
     window.form.activateForm();
-    const allPins = Array.from(document.querySelectorAll(`.map__pin`));
-    for (let i = 0; i < allPins.length; i++) {
-      allPins[i].hidden = false;
-    }
+    // const allPins = Array.from(document.querySelectorAll(`.map__pin`));
+    // for (let i = 0; i < allPins.length; i++) {
+    //   allPins[i].hidden = false;
+    // }
     logoPin.removeEventListener(`keydown`, window.map.onLogoPinKeyDown);
     logoPin.removeEventListener(`mousedown`, window.map.onLogoPinMouseDown);
   };

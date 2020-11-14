@@ -204,19 +204,9 @@
     evt.preventDefault();
   });
 
-  // const selectHousingType = document.querySelector(`#housing-type`); // Тип жилья
   // const selectHousingPrice = document.querySelector(`#housing-price`);
   // const selectHousingRooms = document.querySelector(`#housing-rooms`);
   // const selectHousinGuests = document.querySelector(`#housing-guests`);
-
-  // window.map.allAdd.filter(((el) => el.value === `palace`));
-
-
-  // const selectByHousingType = () => {
-
-  // };
-
-  // selectHousingType.addEventListener(`change`, selectByHousingType);
 
   window.form = {
     host,
