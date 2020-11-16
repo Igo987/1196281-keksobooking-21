@@ -60,31 +60,50 @@
     renderPins(objects);
   };
 
+  // const MAX_LENGTH = 5;
+  // const filterHousingType = (evt) => {
+  //   let filteredObjects = [];
+  //   hidePopup();
+  //   for (let i = 0; i < objects.length; i++) {
+  //     if (objects[i].offer.type === evt.currentTarget.value) {
+  //       filteredObjects.push(objects[i]);
+  //       if (filteredObjects.length <= MAX_LENGTH) {
+  //         document.querySelectorAll(`.map__pin[type='button']`).forEach((el) => (el.remove()));
+  //         renderPins(filteredObjects);
+  //       } else {
+  //         let maxLength = filterHousingType.slice(0, MAX_LENGTH);
+  //         renderPins(maxLength);
+  //       }
+  //     } else if (evt.currentTarget.value === `any`) {
+  //       renderPins(objects);
+  //     }
+  //   }
+  // };
+
+  const MAX_LENGTH = 5;
   const filterHousingType = (evt) => {
-    let selectedСategory = [];
-    let MAX_LENGTH = 5;
+    let filteredObjects = [];
+    hidePopup();
     for (let i = 0; i < objects.length; i++) {
       if (objects[i].offer.type === evt.currentTarget.value) {
-        selectedСategory.push(objects[i]);
-        if (selectedСategory.length <= MAX_LENGTH) {
-          document.querySelectorAll(`.map__pin[type='button']`).forEach((el) => (el.remove()));
-          renderPins(selectedСategory);
-        } else {
-          let maxLength = selectedСategory.slice(0, MAX_LENGTH);
-          renderPins(maxLength);
+        filteredObjects.push(objects[i]);
+        if (filteredObjects.length >= MAX_LENGTH) {
+          break;
         }
       } else if (evt.currentTarget.value === `any`) {
         renderPins(objects);
       }
+
     }
+    window.form.toCloseAllPins();
+    renderPins(filteredObjects);
   };
 
   const selectHousingType = document.querySelector(`#housing-type`); // Тип жилья
+  selectHousingType.addEventListener(`change`, filterHousingType);
   // const selectHousingPrice = document.querySelector(`#housing-price`);
   // const selectHousingRooms = document.querySelector(`#housing-rooms`);
   // const selectHousinGuests = document.querySelector(`#housing-guests`);
-
-  selectHousingType.addEventListener(`change`, filterHousingType);
 
   /* АКТИВАЦИЯ ФОРМЫ */
   const mapBooking = document.querySelector(`.map`);

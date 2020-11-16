@@ -84,10 +84,13 @@
     priceOfHousingTypeSelect.setAttribute(`min`, price);
   });
 
-
   /* Деактивация формы */
-  const deactivateForm = () => {
+  const toCloseAllPins = () => {
     document.querySelectorAll(`.map__pin[type='button']`).forEach((el) => (el.hidden = `true`));
+  };
+
+  const deactivateForm = () => {
+    toCloseAllPins();
     const formInputFields = host.querySelectorAll(`fieldset`);
     for (let i = 0; i < formInputFields.length; i++) {
       formInputFields[i].setAttribute(`disabled`, true);
@@ -96,17 +99,18 @@
     window.map.deactive();
     window.map.hidePopup();
     host.reset();
+    inputs.forEach((el) => (el.style.border = ``));
     updateAddress((window.map.logoPin.getBoundingClientRect().x), (window.map.logoPin.getBoundingClientRect().y));
     window.map.logoPin.addEventListener(`mousedown`, window.map.onLogoPinMouseDown);
     window.map.logoPin.addEventListener(`keydown`, window.map.onLogoPinKeyDown);
   };
 
-  // /* СООБЩЕНИЯ О РЕЗУЛЬТАТАХ ОТПРАВКИ ДАННЫХ*/
+  /* СООБЩЕНИЯ О РЕЗУЛЬТАТАХ ОТПРАВКИ ДАННЫХ*/
   const loadErrorTemplate = document.querySelector(`#error`).content;
-  const customValidityMessage = document.querySelector(`#success`).content;
+  const loadSuccessTemplate = document.querySelector(`#success`).content;
 
   const renderLoadSuccessTemplate = () => {
-    const validityTemplateClone = customValidityMessage.cloneNode(true);
+    const validityTemplateClone = loadSuccessTemplate.cloneNode(true);
     const main = document.querySelector(`main`);
     main.prepend(validityTemplateClone);
 
@@ -128,7 +132,7 @@
     document.addEventListener(`keydown`, closeTemplate);
   };
 
-  const errorTemplate = () => {
+  const renderLoadErrorTemplate = () => {
     const errorTemplateClone = loadErrorTemplate.cloneNode(true);
     const main = document.querySelector(`main`);
     main.prepend(errorTemplateClone);
@@ -152,9 +156,32 @@
   };
   /* КНОПКА СБРОСА */
   const formReset = document.querySelector(`.ad-form__reset`);
-  formReset.addEventListener(`click`, deactivateForm);
+  const resetOnClick = (el) => el.addEventListener(`click`, deactivateForm);
+  resetOnClick(formReset);
+
+  /* Отоображение координат метки в графе `Адрес` */
+  const addressForm = host.querySelector(`#address`);
+  addressForm.setAttribute(`readonly`, true);
+  const updateAddress = (x, y) => {
+    addressForm.value = `${x}, ${y}`;
+  };
 
   /* ВАЛИДАЦИЯ ГРАФ В ФОРМЕ */
+
+  // const setCustomValidity = (element, isValid) => {
+  //   if (isValid) {
+  //     element.setCustomValidity(``);
+  //     element.style.border = `2px solid green`;
+  //   } else {
+  //     element.setCustomValidity(`Введите другое значение `);
+  //     element.style.border = `2px solid red`;
+  //   }
+  // };
+
+  // const isValuePriceValid = Number(priceOfHousingTypeSelect.placeholder) > Number(priceOfHousingTypeSelect.value);
+  // setCustomValidity(priceOfHousingTypeSelect, isValuePriceValid);
+  // priceOfHousingTypeSelect.addEventListener(`change`, setCustomValidity(priceOfHousingTypeSelect, isValuePriceValid));
+
   priceOfHousingTypeSelect.addEventListener(`change`, () => {
     const isValuePriceValid = Number(priceOfHousingTypeSelect.placeholder) > Number(priceOfHousingTypeSelect.value);
     if (isValuePriceValid) {
@@ -166,25 +193,16 @@
     }
   });
 
-
   formTimeIn.addEventListener(`change`, () => {
-    const isValueTimeValid = formTimeIn.value !== formTimeOut.value;
-    if (isValueTimeValid) {
+    const isValueTimeInValid = formTimeIn.value !== formTimeOut.value;
+    if (isValueTimeInValid) {
       formTimeOut.style.border = `2px solid red`;
       formTimeIn.setCustomValidity(`Введите другое значение`);
     } else {
       formTimeOut.style.border = `2px solid green`;
       formTimeIn.setCustomValidity(``);
     }
-    formTimeOut.checkValidity();
   });
-
-  /* Отоображение координат метки в графе `Адрес` */
-  const addressForm = host.querySelector(`#address`);
-  addressForm.setAttribute(`readonly`, true);
-  const updateAddress = (x, y) => {
-    addressForm.value = `${x}, ${y}`;
-  };
 
   inputRoom.addEventListener(`change`, () => {
     const isCapacityOfTheHousingValid = inputRoom.value < inputCapacity.value;
@@ -200,7 +218,7 @@
   let inputs = [priceOfHousingTypeSelect, formTimeOut, inputCapacity];
 
   host.addEventListener(`submit`, function (evt) {
-    window.upload(new FormData(host), renderLoadSuccessTemplate, errorTemplate);
+    window.upload(new FormData(host), renderLoadSuccessTemplate, renderLoadErrorTemplate);
     evt.preventDefault();
   });
 
@@ -210,5 +228,6 @@
     activateTheAdCard,
     updateAddress,
     addressForm,
+    toCloseAllPins,
   };
 })();
