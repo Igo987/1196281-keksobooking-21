@@ -168,51 +168,29 @@
 
   /* ВАЛИДАЦИЯ ГРАФ В ФОРМЕ */
 
-  // const setCustomValidity = (element, isValid) => {
-  //   if (isValid) {
-  //     element.setCustomValidity(``);
-  //     element.style.border = `2px solid green`;
-  //   } else {
-  //     element.setCustomValidity(`Введите другое значение `);
-  //     element.style.border = `2px solid red`;
-  //   }
-  // };
-
-  // const isValuePriceValid = Number(priceOfHousingTypeSelect.placeholder) > Number(priceOfHousingTypeSelect.value);
-  // setCustomValidity(priceOfHousingTypeSelect, isValuePriceValid);
-  // priceOfHousingTypeSelect.addEventListener(`change`, setCustomValidity(priceOfHousingTypeSelect, isValuePriceValid));
+  const setCustomValidity = (element, isValid) => {
+    if (isValid) {
+      element.setCustomValidity(``);
+      element.style.border = `2px solid green`;
+    } else {
+      element.setCustomValidity(`Введите другое значение `);
+      element.style.border = `2px solid red`;
+    }
+  };
 
   priceOfHousingTypeSelect.addEventListener(`change`, () => {
-    const isValuePriceValid = Number(priceOfHousingTypeSelect.placeholder) > Number(priceOfHousingTypeSelect.value);
-    if (isValuePriceValid) {
-      priceOfHousingTypeSelect.setCustomValidity(`Введите другое значение`);
-      priceOfHousingTypeSelect.style.border = `2px solid red`;
-    } else {
-      priceOfHousingTypeSelect.setCustomValidity(``);
-      priceOfHousingTypeSelect.style.border = `2px solid green`;
-    }
+    const isValuePriceValid = Number(priceOfHousingTypeSelect.placeholder) < Number(priceOfHousingTypeSelect.value);
+    setCustomValidity(priceOfHousingTypeSelect, isValuePriceValid);
   });
 
   formTimeIn.addEventListener(`change`, () => {
-    const isValueTimeInValid = formTimeIn.value !== formTimeOut.value;
-    if (isValueTimeInValid) {
-      formTimeOut.style.border = `2px solid red`;
-      formTimeIn.setCustomValidity(`Введите другое значение`);
-    } else {
-      formTimeOut.style.border = `2px solid green`;
-      formTimeIn.setCustomValidity(``);
-    }
+    const isValueTimeInValid = formTimeIn.value === formTimeOut.value;
+    setCustomValidity(formTimeOut, isValueTimeInValid);
   });
 
   inputRoom.addEventListener(`change`, () => {
     const isCapacityOfTheHousingValid = inputRoom.value < inputCapacity.value;
-    if (isCapacityOfTheHousingValid) {
-      inputCapacity.setCustomValidity(`Введите другое значение `);
-      inputCapacity.style.border = `2px solid red`;
-    } else {
-      inputCapacity.setCustomValidity(``);
-      inputCapacity.style.border = `2px solid green`;
-    }
+    setCustomValidity(inputCapacity, isCapacityOfTheHousingValid);
   });
 
   let inputs = [priceOfHousingTypeSelect, formTimeOut, inputCapacity];
