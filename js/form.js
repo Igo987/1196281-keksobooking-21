@@ -189,7 +189,7 @@
   });
 
   inputRoom.addEventListener(`change`, () => {
-    const isCapacityOfTheHousingValid = inputRoom.value < inputCapacity.value;
+    const isCapacityOfTheHousingValid = inputRoom.value >= inputCapacity.value;
     setCustomValidity(inputCapacity, isCapacityOfTheHousingValid);
   });
 
