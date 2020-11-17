@@ -43,7 +43,6 @@
   let renderCard = (object) => {
     cardAvatar.src = object.author.avatar;
     cardTitle.textContent = object.offer.title;
-    cardAvatar.src = object.author.avatar;
     cardTitle.textContent = object.offer.title;
     cardAddress.textContent = object.offer.address;
     cardPrice.textContent = `Цена ` + object.offer.price + ` ₽/ночь`;

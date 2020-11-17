@@ -51,25 +51,72 @@
         showPopup();
       });
       mapPins.after(pinsContainer);
-      mapPin.hidden = true;
     });
   };
-  window.load(renderPins); // загрузка данных
+
+  let objects = [];
+  const onLoad = (data) => {
+    objects = data;
+    renderPins(objects);
+  };
+
+  // const MAX_LENGTH = 5;
+  // const filterHousingType = (evt) => {
+  //   let filteredObjects = [];
+  //   hidePopup();
+  //   for (let i = 0; i < objects.length; i++) {
+  //     if (objects[i].offer.type === evt.currentTarget.value) {
+  //       filteredObjects.push(objects[i]);
+  //       if (filteredObjects.length <= MAX_LENGTH) {
+  //         document.querySelectorAll(`.map__pin[type='button']`).forEach((el) => (el.remove()));
+  //         renderPins(filteredObjects);
+  //       } else {
+  //         let maxLength = filterHousingType.slice(0, MAX_LENGTH);
+  //         renderPins(maxLength);
+  //       }
+  //     } else if (evt.currentTarget.value === `any`) {
+  //       renderPins(objects);
+  //     }
+  //   }
+  // };
+
+  const MAX_LENGTH = 5;
+  const filterHousingType = (evt) => {
+    let filteredObjects = [];
+    hidePopup();
+    for (let i = 0; i < objects.length; i++) {
+      if (objects[i].offer.type === evt.currentTarget.value) {
+        filteredObjects.push(objects[i]);
+        if (filteredObjects.length >= MAX_LENGTH) {
+          break;
+        }
+      } else if (evt.currentTarget.value === `any`) {
+        renderPins(objects);
+      }
+
+    }
+    window.form.toCloseAllPins();
+    renderPins(filteredObjects);
+  };
+
+  const selectHousingType = document.querySelector(`#housing-type`); // Тип жилья
+  selectHousingType.addEventListener(`change`, filterHousingType);
+  // const selectHousingPrice = document.querySelector(`#housing-price`);
+  // const selectHousingRooms = document.querySelector(`#housing-rooms`);
+  // const selectHousinGuests = document.querySelector(`#housing-guests`);
+
+  /* АКТИВАЦИЯ ФОРМЫ */
+  const mapBooking = document.querySelector(`.map`);
 
   const fadeMap = () => {
     mapBooking.classList.add(`map--faded`);
   };
 
-  /* АКТИВАЦИЯ ФОРМЫ */
-  const mapBooking = document.querySelector(`.map`);
   const activateMap = () => {
+    window.load(onLoad);
     mapBooking.classList.remove(`map--faded`);
     window.map.showPopup();
     window.form.activateTheAdCard();
-    const allPins = Array.from(document.querySelectorAll(`.map__pin`));
-    for (let i = 0; i < allPins.length; i++) {
-      allPins[i].hidden = false;
-    }
     logoPin.removeEventListener(`keydown`, onLogoPinKeyDown);
     logoPin.removeEventListener(`mousedown`, onLogoPinMouseDown);
   };
@@ -168,7 +215,8 @@
     showPopup,
     onLogoPinMouseDown,
     onLogoPinKeyDown,
-    addClasstoMapBooking: fadeMap,
+    deactive: fadeMap,
     hidePopup,
+    activateMap,
   };
 })();
